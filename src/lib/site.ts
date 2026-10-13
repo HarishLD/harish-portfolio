@@ -1,0 +1,24 @@
+/**
+ * Site-wide constants. Public values only: nothing secret belongs here.
+ * NEXT_PUBLIC_SITE_URL is set per environment (see .env.example).
+ */
+
+function resolveSiteUrl(): URL {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  if (explicit) return new URL(explicit);
+
+  // Vercel sets this automatically on every deployment (preview and production).
+  const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+  if (vercelUrl) return new URL(`https://${vercelUrl}`);
+
+  return new URL("http://localhost:3000");
+}
+
+export const site = {
+  name: "Harish Doraiswamy",
+  shortName: "Harish",
+  role: "Software Engineer",
+  description:
+    "Software engineer building products across mobile, web and backend with React Native, React, Node.js and SQL.",
+  url: resolveSiteUrl(),
+} as const;

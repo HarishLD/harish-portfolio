@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# harish-portfolio
 
-## Getting Started
+Personal portfolio of Harish Doraiswamy, software engineer across mobile, web and backend.
 
-First, run the development server:
+Built with Next.js (App Router), React and TypeScript. Statically generated, deployed on Vercel.
+
+## Stack
+
+| Concern    | Choice                                                | Why                                                               |
+| ---------- | ----------------------------------------------------- | ----------------------------------------------------------------- |
+| Framework  | Next.js 16 (App Router, Turbopack), React 19          | Static generation for SEO and speed, server components by default |
+| Language   | TypeScript (strict, `noUncheckedIndexedAccess`)       | Catches content and prop mistakes at build time                   |
+| Styling    | Tailwind CSS v4, tokens in `src/app/globals.css`      | One source of truth for the design spec                           |
+| Fonts      | Self-hosted via `next/font/local` (OFL, Latin subset) | No font CDN at build or runtime, zero layout shift                |
+| Animation  | GSAP + ScrollTrigger + Flip (added in M1/M2)          | One animation system for scroll, timelines and layout transitions |
+| Unit tests | Vitest + React Testing Library                        | Fast component and logic tests                                    |
+| E2E / a11y | Playwright + axe-core, desktop and mobile             | Real-browser checks, WCAG 2.1 AA scan on every page               |
+| Perf       | Lighthouse CI budget in GitHub Actions                | Fails the PR if performance, a11y or CLS regress                  |
+
+Deliberately not used: a second animation library (Motion), smooth-scroll hijacking (native scroll stays), WebGL/Three.js, CSS-in-JS.
+
+## Getting started
+
+Requires Node 22.12+ (see `.nvmrc`).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/<you>/harish-portfolio.git
+cd harish-portfolio
+npm ci
+cp .env.example .env.local   # optional locally; defaults to http://localhost:3000
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Script                | What it does                                                   |
+| --------------------- | -------------------------------------------------------------- |
+| `npm run dev`         | Dev server with hot reload                                     |
+| `npm run build`       | Production build                                               |
+| `npm run start`       | Serve the production build                                     |
+| `npm run lint`        | ESLint, zero warnings allowed                                  |
+| `npm run typecheck`   | Generate route types, then `tsc --noEmit`                      |
+| `npm run format`      | Prettier (with Tailwind class sorting)                         |
+| `npm test`            | Unit tests once (`npm run test:watch` to watch)                |
+| `npm run e2e:install` | One-time: download Playwright's Chromium                       |
+| `npm run e2e`         | E2E + accessibility against the production build (build first) |
+| `npm run check`       | Everything CI runs except E2E and Lighthouse                   |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Already have Chrome installed? Skip `e2e:install` and run `PLAYWRIGHT_CHROMIUM_PATH=/path/to/chrome npm run e2e`.
 
-## Learn More
+## Environment variables
 
-To learn more about Next.js, take a look at the following resources:
+Only public, non-secret values. Copy `.env.example` to `.env.local`; `.env*` files are git-ignored except the example.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Variable               | Where                    | Notes                                                       |
+| ---------------------- | ------------------------ | ----------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL` | Local, Vercel Production | Canonical URL. Leave unset on previews (Vercel URL is used) |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+If a secret is ever needed (contact form, analytics key), it goes in Vercel's Environment Variables UI only, never in the repo.
 
-## Deploy on Vercel
+## Project structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+  app/            routes, root layout, fonts, global tokens
+  lib/            framework-free helpers (site config)
+  fonts/          vendored woff2 + licenses
+  components/     (M1+) primitives, nav, hero, work, sections, motion
+  content/        (M1+) typed resume-backed content + schema
+e2e/              Playwright specs
+.github/          CI workflow, Dependabot
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Workflow
+
+- `main` is production. Every change lands through a pull request.
+- One branch per milestone (`m1-foundations`, `m2-hero`, ...). Each PR gets a Vercel preview URL and must pass CI.
+- Content claims come from the resume only. Metrics must declare whether they are platform-wide or personal; recreated client screens must be labelled.
+
+## Milestones
+
+- [x] M0 Setup: tooling, CI, deploy pipeline
+- [ ] M1 Foundations: tokens, primitives, content layer, navigation, motion provider
+- [ ] M2 Hero: Name Wall, morphing device, signal
+- [ ] M3 Work: bento grid, filters, case studies
+- [ ] M4 Layers, Path, How I Work
+- [ ] M5 Contact, resume, SEO (indexing switched on here)
+- [ ] M6 QA and polish
+
+## License
+
+Code: all rights reserved. Fonts: SIL Open Font License, see `src/fonts/licenses`.
