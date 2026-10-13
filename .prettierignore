@@ -10,3 +10,5 @@ test-results
 next-env.d.ts
 src/fonts
 AGENTS.md
+CLAUDE.md
+docs
