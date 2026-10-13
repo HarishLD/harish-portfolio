@@ -5,6 +5,25 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    // Client islands get content as props; importing @/content would ship zod to the browser.
+    files: ["src/components/{nav,motion}/**/*.{ts,tsx}"],
+    ignores: ["src/components/nav/index.tsx", "**/*.test.tsx"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@/content",
+              message: "Pass content from a server component as props.",
+              allowTypeImports: true,
+            },
+          ],
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

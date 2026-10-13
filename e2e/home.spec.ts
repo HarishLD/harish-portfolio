@@ -5,7 +5,7 @@ test.describe("home", () => {
   test("shows name and role", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(/harish/i);
-    await expect(page.getByText(/software engineer/i)).toBeVisible();
+    await expect(page.getByText("Software Engineer", { exact: true }).first()).toBeVisible();
   });
 
   test("has no detectable accessibility violations", async ({ page }) => {

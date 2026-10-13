@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { MotionProvider } from "@/components/motion";
+import { SiteNav } from "@/components/nav";
 import { fontVariables } from "./fonts";
 import { site } from "@/lib/site";
 import "./globals.css";
@@ -27,8 +29,21 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={fontVariables}>
-      <body>{children}</body>
+    <html lang="en" id="top" className={fontVariables}>
+      <body>
+        <a
+          href="#main"
+          className="fixed top-3 left-3 z-50 -translate-y-24 rounded-pill bg-ink px-5 py-3 text-paper focus-visible:translate-y-0"
+        >
+          Skip to content
+        </a>
+        <MotionProvider>
+          <SiteNav />
+          <main id="main" tabIndex={-1} className="pt-16 outline-none lg:pt-20">
+            {children}
+          </main>
+        </MotionProvider>
+      </body>
     </html>
   );
 }

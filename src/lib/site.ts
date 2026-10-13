@@ -1,3 +1,5 @@
+import { profile } from "@/content";
+
 /**
  * Site-wide constants. Public values only: nothing secret belongs here.
  * NEXT_PUBLIC_SITE_URL is set per environment (see .env.example).
@@ -15,9 +17,9 @@ function resolveSiteUrl(): URL {
 }
 
 export const site = {
-  name: "Harish Doraiswamy",
-  shortName: "Harish",
-  role: "Software Engineer",
+  name: profile.name,
+  shortName: profile.shortName,
+  role: profile.role,
   description:
     "Software engineer building products across mobile, web and backend with React Native, React, Node.js and SQL.",
   url: resolveSiteUrl(),
