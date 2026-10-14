@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { SignalLine } from "@/components/signal";
-import { Accent, ButtonLink, Container, Label } from "@/components/ui";
+import { Accent, ButtonLink, Container } from "@/components/ui";
 import type { Profile } from "@/content";
 import { HeroMorph } from "./hero-morph";
 
@@ -9,32 +9,67 @@ import { HeroMorph } from "./hero-morph";
  * are plain HTML, the avatar is the preloaded LCP image. HeroMorph is the
  * only client island and layers the device morph on after idle.
  *
- * Desktop: HARISH across the top, the avatar standing on the hero line in
- * front of its last letter, the device floating at his side, text and CTAs
- * bottom left.
- * Mobile: text first, then avatar and device sharing the bottom of the screen.
+ * One grid, sized by the name itself:
+ * - Column 1 is exactly as wide as HARISH, so the avatar centers under "RIS"
+ *   without measuring. Its height follows the name size, so his head always
+ *   covers the upper half of the letters.
+ * - Desktop (xl): role, tagline and CTAs sit right under the name, left of
+ *   the avatar; the device takes column 2, past the end of the name. The
+ *   avatar stands on the hero's bottom edge.
+ * - Below xl: the device moves under the letters at the avatar's side, the
+ *   avatar stands on a line, and the text follows below it.
+ *
+ * Vars: --F name size, --Ha avatar height (desktop: 72svh, max 680px).
  */
 export function Hero({ profile }: { profile: Profile }) {
   return (
     <section
       data-hero=""
       aria-labelledby="hero-title"
-      className="relative overflow-hidden border-b border-line [--signal-start:5.75rem]"
+      className="relative overflow-hidden xl:border-b xl:border-line"
     >
-      <Container className="relative flex min-h-[calc(100svh-4rem)] flex-col pt-8 pb-10 lg:min-h-[max(calc(100svh-5rem),40rem)] lg:pt-10 lg:pb-16">
-        <Label className="relative z-30 text-muted">{profile.role}</Label>
+      <Container
+        className={[
+          "relative grid grid-cols-[auto_1fr] pt-8 xl:pt-10",
+          "[--F:var(--text-name)] [--Ha:min(calc(var(--F)*2.2),55svh)] xl:[--Ha:min(72svh,680px)]",
+          // Row 2 is the avatar's height minus the part that overlaps the name.
+          "grid-rows-[auto_calc(var(--Ha)-var(--F)*0.7)_auto]",
+          "xl:min-h-[calc(var(--F)*0.12+var(--Ha))] xl:grid-rows-[auto_auto_1fr]",
+        ].join(" ")}
+      >
         <h1
           id="hero-title"
-          className="relative z-0 mt-2 font-display text-name tracking-[-0.01em] uppercase"
+          className="relative z-0 col-start-1 row-start-1 font-display text-name tracking-[-0.01em] uppercase"
         >
           {profile.shortName}
         </h1>
 
-        <div className="relative z-30 mt-4 flex flex-col gap-6 lg:mt-auto lg:max-w-[34rem] lg:gap-8">
-          <Accent as="p" className="text-[clamp(2rem,3.4vw,3rem)] leading-none">
+        <Image
+          src="/avatars/hero-main-outline.webp"
+          alt={`Illustrated avatar of ${profile.shortName}`}
+          width={1612}
+          height={2310}
+          preload
+          fetchPriority="high"
+          sizes="(min-width: 1280px) 475px, 45vw"
+          className="relative z-10 col-start-1 row-span-2 row-start-1 h-(--Ha) w-auto max-w-none self-end justify-self-center xl:row-span-full"
+        />
+
+        {/* Below xl the avatar stands on this line; on xl the hero's bottom edge plays that part. */}
+        <span
+          aria-hidden="true"
+          className="col-span-full row-start-2 h-px self-end bg-line xl:hidden"
+        />
+
+        <HeroMorph className="relative z-20 col-span-full row-start-2 mb-2 w-[min(34%,calc(var(--Ha)-var(--F)*0.7-4.5rem))] items-end self-end justify-self-end xl:col-span-1 xl:col-start-2 xl:row-span-full xl:row-start-1 xl:mb-8 xl:ml-6 xl:w-full xl:max-w-[300px] xl:items-center xl:justify-self-center" />
+
+        <div className="relative z-30 col-span-full row-start-3 flex flex-col gap-5 pt-8 pb-10 [--signal-top:0.9rem] xl:col-span-1 xl:col-start-1 xl:row-span-2 xl:row-start-2 xl:max-w-[calc(var(--F)*1.3-var(--Ha)*0.349-1.5rem)] xl:pt-6 xl:pb-0">
+          <SignalLine tone="paper" variant="start" anchor="content" />
+          <p className="text-lg font-medium xl:text-xl">{profile.role}</p>
+          <Accent as="p" className="-mt-2 text-[clamp(2.25rem,8vw,2.75rem)] leading-[1.02]">
             {profile.tagline}
           </Accent>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 pt-1">
             <ButtonLink href="/#work" size="lg">
               See the work
             </ButtonLink>
@@ -45,24 +80,7 @@ export function Hero({ profile }: { profile: Profile }) {
             )}
           </div>
         </div>
-
-        {/* Mobile: a stage under the text. Desktop: a layer over the whole hero. */}
-        <div className="pointer-events-none relative mt-8 -mb-10 min-h-[24rem] flex-1 [--avatar-h:min(72svh,680px)] [--avatar-left:calc(3.5rem+min(70vw,1014px)-var(--avatar-h)*0.349)] [--device-w:clamp(200px,18vw,280px)] lg:absolute lg:inset-0 lg:m-0">
-          <Image
-            src="/avatars/hero-main-outline.webp"
-            alt={`Illustrated avatar of ${profile.shortName}`}
-            width={1612}
-            height={2310}
-            preload
-            fetchPriority="high"
-            sizes="(min-width: 1024px) 475px, 62vw"
-            className="absolute right-[-6%] bottom-0 z-10 h-full w-auto max-w-none lg:right-auto lg:left-(--avatar-left) lg:h-(--avatar-h)"
-          />
-          {/* Desktop: beside the avatar, just overlapping his sleeve. */}
-          <HeroMorph className="pointer-events-auto absolute bottom-4 left-0 z-20 w-[48%] max-w-64 lg:bottom-[9%] lg:left-[calc(var(--avatar-left)-var(--device-w)+1.5rem)] lg:w-(--device-w) lg:max-w-none" />
-        </div>
       </Container>
-      <SignalLine tone="paper" variant="start" />
     </section>
   );
 }

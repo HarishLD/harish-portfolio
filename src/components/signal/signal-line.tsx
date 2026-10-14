@@ -3,10 +3,15 @@ import { cx } from "@/lib/cx";
 type SignalLineProps = {
   tone: "paper" | "ink";
   /**
-   * "start": begins at the dot (hero CTAs) and runs to the section bottom.
+   * "start": begins at the dot (offset by --signal-top) and runs to the bottom.
    * "through": runs the full height. "end": stops at the dot (the contact CTA).
    */
   variant?: "start" | "through" | "end";
+  /**
+   * "section": placed in the gutter of a full-width section.
+   * "content": placed 28px left of a positioned element whose left edge is the content edge.
+   */
+  anchor?: "section" | "content";
   className?: string;
 };
 
@@ -18,15 +23,22 @@ type SignalLineProps = {
  *
  * Signal is a light: lime on ink, an ink line with a ringed lime dot on paper.
  */
-export function SignalLine({ tone, variant = "through", className }: SignalLineProps) {
+export function SignalLine({
+  tone,
+  variant = "through",
+  anchor = "section",
+  className,
+}: SignalLineProps) {
   return (
     <span
       aria-hidden="true"
       data-signal-line={variant}
       className={cx(
         "pointer-events-none absolute hidden w-0 md:block",
-        variant === "start" ? "bottom-0 h-(--signal-start,6rem)" : "top-0",
-        "left-[calc(max(0px,(100%-var(--container-site))/2)+28px)]",
+        variant === "start" ? "top-(--signal-top,0px) bottom-0" : "top-0",
+        anchor === "section"
+          ? "left-[calc(max(0px,(100%-var(--container-site))/2)+28px)]"
+          : "-left-7",
         variant === "through" && "bottom-0",
         variant === "end" && "h-34",
         className,

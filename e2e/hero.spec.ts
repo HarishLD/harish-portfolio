@@ -14,6 +14,37 @@ test.describe("hero", () => {
     });
   });
 
+  test("composition: avatar under RIS, device clear of the letters", async ({ page }) => {
+    await page.goto("/");
+    const geo = await page.evaluate(() => {
+      const h1 = document.querySelector("h1")!;
+      const range = document.createRange();
+      range.selectNodeContents(h1);
+      const run = range.getClientRects()[0]!;
+      const box = h1.getBoundingClientRect();
+      const avatar = document.querySelector('img[alt^="Illustrated"]')!.getBoundingClientRect();
+      const device = document.querySelector("[data-device-stage]")!.getBoundingClientRect();
+      const hero = document.querySelector("[data-hero]")!.getBoundingClientRect();
+      return {
+        avatarCenterPct: ((avatar.left + avatar.width / 2 - run.left) / run.width) * 100,
+        avatarTop: avatar.top,
+        lettersTop: box.top,
+        lettersBottom: box.bottom,
+        lettersRight: run.right,
+        deviceLeft: device.left,
+        deviceTop: device.top,
+        avatarBottom: avatar.bottom,
+        heroBottom: hero.bottom,
+      };
+    });
+    expect(geo.avatarCenterPct).toBeGreaterThan(40);
+    expect(geo.avatarCenterPct).toBeLessThan(60);
+    // Head overlaps the upper half of the letters.
+    expect(geo.avatarTop).toBeLessThan(geo.lettersTop + (geo.lettersBottom - geo.lettersTop) / 2);
+    expect(geo.deviceLeft >= geo.lettersRight || geo.deviceTop >= geo.lettersBottom).toBe(true);
+    expect(geo.avatarBottom).toBeLessThanOrEqual(geo.heroBottom + 1);
+  });
+
   test("the avatar is preloaded for LCP", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator('link[rel="preload"][as="image"]')).toHaveCount(1);

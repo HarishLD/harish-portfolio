@@ -72,7 +72,7 @@ export function HeroMorph({ className }: { className?: string }) {
   );
 
   return (
-    <div ref={scope} className={cx("flex flex-col items-center gap-5", className)}>
+    <div ref={scope} className={cx("flex flex-col gap-4", className)}>
       <Device state={state} className="w-full" />
       {motion.reduced ? (
         <div role="group" aria-label="Device layer" className={rowClass}>
