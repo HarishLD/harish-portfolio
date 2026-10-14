@@ -23,7 +23,16 @@
   --font-sans: var(--font-schibsted), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
+  --text-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem); /* 17 to 19px */
+  --text-body--line-height: 1.55;
+  --text-label: 0.75rem; /* 12px; Label bumps to 13px from md */
+  --text-label--line-height: 1.3;
+  --text-label--letter-spacing: 0.06em;
+  --text-name: clamp(128px, 27vw, 390px);
+  --text-name--line-height: 0.82;
+
   /* Shape */
+  --radius-pill: 999px;
   --radius-inner: 14px;
   --radius-card: 26px;
   --radius-device: 34px;
@@ -45,11 +54,22 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    scroll-padding-top: 96px;
+  }
+
+  body {
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
   }
 
   ::selection {
     background: var(--color-signal);
     color: var(--color-ink);
+  }
+
+  /* Lock page scroll behind the full-screen menu. */
+  html:has(dialog[open]) {
+    overflow: hidden;
   }
 
   :focus-visible {

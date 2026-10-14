@@ -12,7 +12,7 @@ Built with Next.js (App Router), React and TypeScript. Statically generated, dep
 | Language   | TypeScript (strict, `noUncheckedIndexedAccess`)       | Catches content and prop mistakes at build time                   |
 | Styling    | Tailwind CSS v4, tokens in `src/app/globals.css`      | One source of truth for the design spec                           |
 | Fonts      | Self-hosted via `next/font/local` (OFL, Latin subset) | No font CDN at build or runtime, zero layout shift                |
-| Animation  | GSAP + ScrollTrigger + Flip (added in M1/M2)          | One animation system for scroll, timelines and layout transitions |
+| Animation  | GSAP (+ Flip, CustomEase; ScrollTrigger in M2)        | One animation system for scroll, timelines and layout transitions |
 | Unit tests | Vitest + React Testing Library                        | Fast component and logic tests                                    |
 | E2E / a11y | Playwright + axe-core, desktop and mobile             | Real-browser checks, WCAG 2.1 AA scan on every page               |
 | Perf       | Lighthouse CI budget in GitHub Actions                | Fails the PR if performance, a11y or CLS regress                  |
@@ -44,6 +44,7 @@ npm run dev                  # http://localhost:3000
 | `npm test`            | Unit tests once (`npm run test:watch` to watch)                |
 | `npm run e2e:install` | One-time: download Playwright's Chromium                       |
 | `npm run e2e`         | E2E + accessibility against the production build (build first) |
+| `npm run budget`      | Initial JS budget per page (after a build): framework + 50 KB  |
 | `npm run check`       | Everything CI runs except E2E and Lighthouse                   |
 
 Already have Chrome installed? Skip `e2e:install` and run `PLAYWRIGHT_CHROMIUM_PATH=/path/to/chrome npm run e2e`.
@@ -63,10 +64,13 @@ If a secret is ever needed (contact form, analytics key), it goes in Vercel's En
 ```
 src/
   app/            routes, root layout, fonts, global tokens
-  lib/            framework-free helpers (site config)
+  lib/            framework-free helpers (site config, cx)
   fonts/          vendored woff2 + licenses
-  components/     (M1+) primitives, nav, hero, work, sections, motion
-  content/        (M1+) typed resume-backed content + schema
+  components/
+    ui/           primitives: Container, Section, Card, Button(Link), Label, Display, Accent, SignalDot
+    motion/       lazy GSAP loaders, useLazyGsap, MotionProvider (reduced motion)
+    nav/          desktop bar → dock (GSAP Flip), mobile full-screen <dialog> menu
+  content/        typed resume-backed content, validated with zod at build time
 e2e/              Playwright specs
 .github/          CI workflow, Dependabot
 ```
@@ -80,7 +84,7 @@ e2e/              Playwright specs
 ## Milestones
 
 - [x] M0 Setup: tooling, CI, deploy pipeline
-- [ ] M1 Foundations: tokens, primitives, content layer, navigation, motion provider
+- [ ] M1 Foundations: tokens, primitives, content layer, navigation, motion provider (in review)
 - [ ] M2 Hero: Name Wall, morphing device, signal
 - [ ] M3 Work: bento grid, filters, case studies
 - [ ] M4 Layers, Path, How I Work

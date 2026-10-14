@@ -15,12 +15,15 @@
     "test:watch": "vitest",
     "e2e": "playwright test",
     "e2e:install": "playwright install --with-deps chromium",
-    "check": "npm run lint && npm run typecheck && npm run format:check && npm run test && npm run build"
+    "check": "npm run lint && npm run typecheck && npm run format:check && npm run test && npm run build && npm run budget",
+    "budget": "node scripts/js-budget.mjs"
   },
   "dependencies": {
+    "gsap": "^3.15.0",
     "next": "16.4.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
@@ -34,7 +37,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.1.2",
-    "eslint": "^9",
+    "eslint": "^10.12.0",
     "eslint-config-next": "16.4.0",
     "jsdom": "^29.1.1",
     "prettier": "^3.9.10",
@@ -45,5 +48,20 @@
   },
   "engines": {
     "node": ">=22.12"
+  },
+  "allowScripts": {
+    "fsevents@2.3.3": true,
+    "unrs-resolver@1.12.2": true
+  },
+  "overrides": {
+    "eslint-plugin-import": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-jsx-a11y": {
+      "eslint": "$eslint"
+    },
+    "eslint-plugin-react": {
+      "eslint": "$eslint"
+    }
   }
 }
