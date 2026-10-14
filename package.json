@@ -15,10 +15,10 @@
     "test:watch": "vitest",
     "e2e": "playwright test",
     "e2e:install": "playwright install --with-deps chromium",
-    "check": "npm run lint && npm run typecheck && npm run format:check && npm run test && npm run build"
+    "check": "npm run lint && npm run typecheck && npm run format:check && npm run test && npm run build && npm run budget",
+    "budget": "node scripts/js-budget.mjs"
   },
   "dependencies": {
-    "@gsap/react": "^2.1.2",
     "gsap": "^3.15.0",
     "next": "16.4.0",
     "react": "19.3.0",

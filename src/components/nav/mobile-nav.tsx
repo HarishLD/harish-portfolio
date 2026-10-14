@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { gsap, useMotion } from "@/components/motion";
+import { type Gsap, loadGsap, useMotion } from "@/components/motion";
 import { buttonClasses } from "@/components/ui";
 import type { NavData } from "./types";
 
@@ -10,23 +10,47 @@ import type { NavData } from "./types";
  * Mobile and tablet navigation (below lg): a slim top bar with a menu button
  * that opens a full-screen menu. Uses a native modal <dialog> for focus
  * trapping, Escape, inert background and focus return.
+ * GSAP loads on intent (pointer down or focus on the button). If it hasn't
+ * arrived by the time of the click, the menu simply opens without animation.
  */
 export function MobileNav({ data }: { data: NavData }) {
   const motion = useMotion();
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const gsapRef = useRef<Gsap | null>(null);
   const [open, setOpen] = useState(false);
+
+  function preload() {
+    if (gsapRef.current) return;
+    void loadGsap().then((gsap) => {
+      gsapRef.current = gsap;
+    });
+  }
 
   function openMenu() {
     const dialog = dialogRef.current;
     if (!dialog || dialog.open) return;
+    preload();
     dialog.showModal();
     setOpen(true);
-    gsap.fromTo(dialog, { autoAlpha: 0 }, { autoAlpha: 1, duration: motion.duration.ui });
+    const gsap = gsapRef.current;
+    if (!gsap) return;
+    gsap.fromTo(
+      dialog,
+      { autoAlpha: 0 },
+      { autoAlpha: 1, duration: motion.duration.ui, ease: motion.ease },
+    );
     if (!motion.reduced) {
       gsap.fromTo(
         dialog.querySelectorAll("[data-menu-item]"),
         { y: 48, opacity: 0 },
-        { y: 0, opacity: 1, duration: motion.duration.section, stagger: 0.05, delay: 0.05 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: motion.duration.section,
+          ease: motion.ease,
+          stagger: 0.05,
+          delay: 0.05,
+        },
       );
     }
   }
@@ -34,10 +58,19 @@ export function MobileNav({ data }: { data: NavData }) {
   function closeMenu() {
     const dialog = dialogRef.current;
     if (!dialog?.open) return;
+    const gsap = gsapRef.current;
+    if (!gsap) {
+      dialog.close();
+      return;
+    }
     gsap.to(dialog, {
       autoAlpha: 0,
       duration: motion.reduced ? motion.duration.ui : motion.duration.micro,
-      onComplete: () => dialog.close(),
+      ease: motion.ease,
+      onComplete: () => {
+        dialog.close();
+        gsap.set(dialog, { clearProps: "opacity,visibility" });
+      },
     });
   }
 
@@ -50,6 +83,8 @@ export function MobileNav({ data }: { data: NavData }) {
         <button
           type="button"
           onClick={openMenu}
+          onPointerDown={preload}
+          onFocus={preload}
           aria-haspopup="dialog"
           aria-expanded={open}
           aria-controls="site-menu"

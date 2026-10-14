@@ -16,12 +16,17 @@ Source of truth for all claims: `docs/resume-facts.md` (from the resume). Never 
 ## Status
 
 - [x] M0 Setup (Next.js 16, React 19, TS strict, Tailwind v4 tokens, self-hosted fonts, Vitest, Playwright + axe, Lighthouse CI, GitHub Actions)
-- [ ] M1 Foundations: primitives, typed content layer + zod schema, nav (top bar → floating dock on desktop, full-screen menu on mobile), motion provider with reduced-motion
+- [x] M1 Foundations: primitives, typed content layer + zod schema, nav (top bar → floating dock on desktop, full-screen menu on mobile), motion provider with reduced-motion
 - [ ] M2 Hero: Name Wall static first (fast LCP), then fake-3D morph device + signal line on scroll
 - [ ] M3 Work: bento grid, layer filters, recreated screens, case studies (`/work/[slug]` pages + overlay)
 - [ ] M4 Layers (pinned desktop, swipe mobile), Path timeline, How I Work
 - [ ] M5 Contact, resume download, SEO (metadata, OG, JSON-LD, sitemap), switch robots to index
 - [ ] M6 QA and polish
+
+## Housekeeping
+
+- ESLint 10: `package.json` `overrides` force the eslint peer for `eslint-plugin-import`, `eslint-plugin-jsx-a11y` and `eslint-plugin-react` (via `eslint-config-next`). Remove those overrides once the plugins declare ESLint 10 support (check with `npm view <plugin> peerDependencies`).
+- `npm audit` shows a dev-only `braces` advisory (GHSA-vfj7-8cjw-p6xm) with no upstream fix; CI audits production deps only.
 
 ## Positioning
 
@@ -74,7 +79,10 @@ Internal AI tools / Claude Code usage goes in "How I Work", not a project card.
 
 ## Performance budget
 
-LCP < 2s (mid Android, 4G), CLS < 0.05, INP < 200ms, initial JS ~150KB gz. Server components by default, client islands only for hero, grid, nav. Avatar via next/image with priority.
+LCP < 2s (mid Android, 4G), CLS < 0.05, INP < 200ms.
+Initial JS: framework + at most 50KB gz of our own code, per page. `npm run budget` (in `npm run check` and CI) measures it after a build; "framework" is what Next loads for its built-in `_global-error` page (~171KB gz on Next 16.4 / React 19.3).
+GSAP is never in the initial bundle: load it through `src/components/motion` (`useLazyGsap` with `load: "visible"` below the fold, `"idle"` above it; nav loads on idle/intent). Content never waits on it.
+Server components by default, client islands only for hero, grid, nav. Client islands get content as props (lint blocks importing `@/content` there, which would ship zod). Avatar via next/image with `preload` (Next 16 replaced `priority`).
 
 ## Assets
 

@@ -1,37 +1,25 @@
 "use client";
 
-import type { Flip as FlipPlugin } from "gsap/Flip";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { gsap, useGSAP, useMotion } from "@/components/motion";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { type Flip, type Gsap, loadFlip, loadGsap, onIdle, useMotion } from "@/components/motion";
 import { buttonClasses } from "@/components/ui";
 import { cx } from "@/lib/cx";
 import type { NavData } from "./types";
-
-type Flip = typeof FlipPlugin;
-
-// Flip is desktop-only, so it loads on demand instead of in the shared bundle.
-let flipPromise: Promise<Flip> | undefined;
-function loadFlip() {
-  flipPromise ??= import("gsap/Flip").then(({ Flip }) => {
-    gsap.registerPlugin(Flip);
-    return Flip;
-  });
-  return flipPromise;
-}
 
 /**
  * Desktop navigation (lg and up). A top bar that morphs into a floating dock
  * once the first half-screen has scrolled past, and back again.
  * The morph is a GSAP Flip over transform/opacity: the ink plate behind the
  * dock and each link fly from their bar positions to their dock positions.
+ * GSAP and Flip load on idle, so they never block first paint or hydration.
  */
 export function DesktopNav({ data }: { data: NavData }) {
   const motion = useMotion();
   const navRef = useRef<HTMLElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
-  const flip = useRef<Flip | null>(null);
+  const lib = useRef<{ gsap: Gsap; flip: Flip } | null>(null);
   const flipState = useRef<ReturnType<Flip["getState"]> | null>(null);
   const [docked, setDocked] = useState(false);
   const dockedRef = useRef(false);
@@ -40,56 +28,68 @@ export function DesktopNav({ data }: { data: NavData }) {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
     let cancelled = false;
+    const load = async () => {
+      lib.current ??= { gsap: await loadGsap(), flip: await loadFlip() };
+      return lib.current;
+    };
     const io = new IntersectionObserver(async ([entry]) => {
       // Below lg the sentinel is display:none (no offsetParent): the mobile nav is in charge.
       if (!entry || sentinel.offsetParent === null) return;
       const next = !entry.isIntersecting;
       if (next === dockedRef.current) return;
       dockedRef.current = next;
-      flip.current ??= await loadFlip();
+      const { flip } = await load();
       if (cancelled || !navRef.current) return;
       // Capture the current layout before React swaps bar/dock classes.
-      flipState.current = flip.current.getState(navRef.current.querySelectorAll("[data-flip-id]"), {
+      flipState.current = flip.getState(navRef.current.querySelectorAll("[data-flip-id]"), {
         props: "opacity,color,backgroundColor",
       });
       setDocked(dockedRef.current);
     });
     io.observe(sentinel);
-    if (sentinel.offsetParent !== null) void loadFlip();
+    const cancelIdle = onIdle(() => {
+      if (sentinel.offsetParent !== null) void load();
+    });
     return () => {
       cancelled = true;
+      cancelIdle();
       io.disconnect();
     };
   }, []);
 
-  useGSAP(
-    () => {
-      const state = flipState.current;
-      flipState.current = null;
-      if (!state || !navRef.current || !flip.current) return;
+  // Layout effect: animate from the captured state before the browser paints the new layout.
+  useLayoutEffect(() => {
+    const state = flipState.current;
+    flipState.current = null;
+    const nav = navRef.current;
+    if (!state || !nav || !lib.current) return;
+    const { gsap, flip } = lib.current;
 
-      if (motion.reduced) {
+    if (motion.reduced) {
+      const tween = gsap.fromTo(
+        nav,
+        { autoAlpha: 0 },
+        { autoAlpha: 1, duration: motion.duration.ui },
+      );
+      return () => {
+        tween.progress(1).kill();
+      };
+    }
+    const timeline = flip.from(state, {
+      duration: motion.duration.ui,
+      ease: motion.ease,
+      prune: true,
+      onEnter: (els) =>
         gsap.fromTo(
-          navRef.current,
-          { autoAlpha: 0 },
-          { autoAlpha: 1, duration: motion.duration.ui },
-        );
-        return;
-      }
-      flip.current.from(state, {
-        duration: motion.duration.ui,
-        ease: motion.ease,
-        prune: true,
-        onEnter: (els) =>
-          gsap.fromTo(
-            els,
-            { opacity: 0, scale: 0.6 },
-            { opacity: 1, scale: 1, duration: motion.duration.ui },
-          ),
-      });
-    },
-    { dependencies: [docked], scope: navRef },
-  );
+          els,
+          { opacity: 0, scale: 0.6 },
+          { opacity: 1, scale: 1, duration: motion.duration.ui, ease: motion.ease },
+        ),
+    });
+    return () => {
+      timeline.progress(1).kill();
+    };
+  }, [docked, motion]);
 
   return (
     <div className="hidden lg:block">

@@ -44,6 +44,7 @@ npm run dev                  # http://localhost:3000
 | `npm test`            | Unit tests once (`npm run test:watch` to watch)                |
 | `npm run e2e:install` | One-time: download Playwright's Chromium                       |
 | `npm run e2e`         | E2E + accessibility against the production build (build first) |
+| `npm run budget`      | Initial JS budget per page (after a build): framework + 50 KB  |
 | `npm run check`       | Everything CI runs except E2E and Lighthouse                   |
 
 Already have Chrome installed? Skip `e2e:install` and run `PLAYWRIGHT_CHROMIUM_PATH=/path/to/chrome npm run e2e`.
@@ -67,7 +68,7 @@ src/
   fonts/          vendored woff2 + licenses
   components/
     ui/           primitives: Container, Section, Card, Button(Link), Label, Display, Accent, SignalDot
-    motion/       GSAP entry point + MotionProvider (reduced motion)
+    motion/       lazy GSAP loaders, useLazyGsap, MotionProvider (reduced motion)
     nav/          desktop bar → dock (GSAP Flip), mobile full-screen <dialog> menu
   content/        typed resume-backed content, validated with zod at build time
 e2e/              Playwright specs

@@ -1,14 +1,7 @@
 "use client";
 
-import {
-  createContext,
-  type ReactNode,
-  use,
-  useEffect,
-  useMemo,
-  useSyncExternalStore,
-} from "react";
-import { SIGNAL_EASE, gsap } from "./gsap";
+import { createContext, type ReactNode, use, useMemo, useSyncExternalStore } from "react";
+import { SIGNAL_EASE } from "./gsap";
 
 const QUERY = "(prefers-reduced-motion: reduce)";
 
@@ -17,6 +10,7 @@ const FULL = { micro: 0.2, ui: 0.45, section: 0.8 } as const;
 /** Reduced motion: every transition becomes a 150ms fade. */
 const REDUCED = { micro: 0.15, ui: 0.15, section: 0.15 } as const;
 
+/** Pass `ease` and a `duration` explicitly on every tween: GSAP loads lazily, so there are no global defaults. */
 export type Motion = {
   /** True when the user asked for reduced motion: no scrub, no parallax, no transforms. */
   reduced: boolean;
@@ -43,10 +37,6 @@ const getServerSnapshot = () => false;
 export function MotionProvider({ children }: { children: ReactNode }) {
   const reduced = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const value = useMemo(() => (reduced ? reducedMotion : fullMotion), [reduced]);
-
-  useEffect(() => {
-    gsap.defaults({ ease: value.ease, duration: value.duration.ui });
-  }, [value]);
 
   return <MotionContext value={value}>{children}</MotionContext>;
 }
