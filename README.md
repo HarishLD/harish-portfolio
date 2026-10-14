@@ -12,7 +12,7 @@ Built with Next.js (App Router), React and TypeScript. Statically generated, dep
 | Language   | TypeScript (strict, `noUncheckedIndexedAccess`)       | Catches content and prop mistakes at build time                   |
 | Styling    | Tailwind CSS v4, tokens in `src/app/globals.css`      | One source of truth for the design spec                           |
 | Fonts      | Self-hosted via `next/font/local` (OFL, Latin subset) | No font CDN at build or runtime, zero layout shift                |
-| Animation  | GSAP (+ Flip, CustomEase; ScrollTrigger in M2)        | One animation system for scroll, timelines and layout transitions |
+| Animation  | GSAP + Flip + ScrollTrigger, all lazy-loaded          | One animation system for scroll, timelines and layout transitions |
 | Unit tests | Vitest + React Testing Library                        | Fast component and logic tests                                    |
 | E2E / a11y | Playwright + axe-core, desktop and mobile             | Real-browser checks, WCAG 2.1 AA scan on every page               |
 | Perf       | Lighthouse CI budget in GitHub Actions                | Fails the PR if performance, a11y or CLS regress                  |
@@ -70,6 +70,8 @@ src/
     ui/           primitives: Container, Section, Card, Button(Link), Label, Display, Accent, SignalDot
     motion/       lazy GSAP loaders, useLazyGsap, MotionProvider (reduced motion)
     nav/          desktop bar → dock (GSAP Flip), mobile full-screen <dialog> menu
+    hero/         Name Wall, fake-3D device, scroll morph island
+    signal/       signal thread segments + draw-in island
   content/        typed resume-backed content, validated with zod at build time
 e2e/              Playwright specs
 .github/          CI workflow, Dependabot
