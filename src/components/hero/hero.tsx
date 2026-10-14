@@ -10,12 +10,14 @@ import { HeroMorph } from "./hero-morph";
  * only client island and layers the device morph on after idle.
  *
  * One grid, sized by the name itself (column 1 is exactly as wide as HARISH):
- * - Desktop (xl): the avatar is centered over the "I" (its center sits at
- *   59.5% of the name's width in Anton) and stands on the hero's bottom edge,
- *   head over the upper half of the letters. Role, tagline and CTAs sit under
- *   the name, left of the avatar; the device takes column 2, past the name.
- * - Below xl: the avatar is centered under the name and stands on a line; a
- *   small flat device sits beside him, the text follows below the line.
+ * - Everywhere: the avatar is centered over the "I" (its center sits at 59.5%
+ *   of the name's width in Anton), head over the upper half of the letters,
+ *   so the R stays visible.
+ * - Desktop (xl): he stands on the hero's bottom edge. Role, tagline and CTAs
+ *   sit under the name, left of the avatar; the device takes column 2.
+ * - md to xl: he stands on a line; a small flat device sits beside him and the
+ *   text follows below the line.
+ * - Below md: no device (the reduced-motion chips stay, below the line).
  *
  * Vars: --F name size, --Ha avatar height (desktop: 72svh, max 680px).
  */
@@ -51,7 +53,7 @@ export function Hero({ profile }: { profile: Profile }) {
           preload
           fetchPriority="high"
           sizes="(min-width: 1280px) 475px, 45vw"
-          className="relative z-10 col-start-1 row-span-2 row-start-1 h-(--Ha) w-auto max-w-none self-end justify-self-center xl:row-span-full xl:ml-[calc(59.5%-var(--Ha)*0.349)] xl:justify-self-start"
+          className="relative z-10 col-start-1 row-span-2 row-start-1 ml-[calc(59.5%-var(--Ha)*0.349)] h-(--Ha) w-auto max-w-none self-end justify-self-start xl:row-span-full"
         />
 
         {/* Below xl the avatar stands on this line; on xl the hero's bottom edge plays that part. */}
@@ -63,12 +65,12 @@ export function Hero({ profile }: { profile: Profile }) {
         {/*
           Desktop: a column past the end of the name, top aligned with the letters,
           15% larger than the column (capped at 345px).
-          Below xl: flat and small, between the avatar and the screen edge, on the line;
-          chips (reduced motion only) go below the line.
+          md to xl: flat and small, between the avatar and the screen edge, on the line.
+          Below md: hidden. Chips (reduced motion only) go below the line.
         */}
         <HeroMorph
           className="relative z-20 xl:col-start-2 xl:row-span-full xl:row-start-1 xl:mt-[calc(var(--F)*-0.06)] xl:ml-6 xl:w-[min(345px,calc((100%-1.5rem)*1.15))] xl:self-start xl:justify-self-start"
-          deviceClassName="relative z-20 col-span-full row-start-2 mb-5 w-[min(calc(100%-var(--F)*1.294-var(--Ha)*0.349-0.75rem),calc(var(--Ha)-var(--F)*0.7-1.5rem),9rem)] self-end justify-self-end"
+          deviceClassName="relative z-20 col-span-full row-start-2 mb-5 max-md:hidden w-[min(calc(100%-var(--F)*1.539-var(--Ha)*0.349-0.75rem),calc(var(--Ha)-var(--F)*0.7-1.5rem),9rem)] self-end justify-self-end"
           chipsClassName="col-span-full row-start-3 mt-4 justify-self-end xl:mt-0"
         />
 

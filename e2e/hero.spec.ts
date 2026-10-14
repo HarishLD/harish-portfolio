@@ -29,12 +29,12 @@ test.describe("hero", () => {
       range.setEnd(text, 4);
       const letterI = R(range);
       const avatar = R(document.querySelector('img[alt^="Illustrated"]')!);
-      const device = R(document.querySelector("[data-device-stage]")!.parentElement!);
+      const deviceEl = document.querySelector("[data-device-stage]")!.parentElement!;
+      const device = R(deviceEl);
       const hero = R(document.querySelector("[data-hero]")!);
       return {
         avatarCenter: avatar.left + avatar.width / 2,
         iCenter: letterI.left + letterI.width / 2,
-        avatarCenterPct: ((avatar.left + avatar.width / 2 - run.left) / run.width) * 100,
         avatarTop: avatar.top,
         avatarRight: avatar.right,
         avatarBottom: avatar.bottom,
@@ -44,27 +44,27 @@ test.describe("hero", () => {
         deviceLeft: device.left,
         deviceTop: device.top,
         heroBottom: hero.bottom,
+        deviceVisible: getComputedStyle(deviceEl).display !== "none",
       };
     });
     // Head over the upper half of the letters; avatar bottom-anchored.
     expect(geo.avatarTop).toBeLessThan(geo.lettersTop + (geo.lettersBottom - geo.lettersTop) / 2);
     expect(geo.avatarBottom).toBeLessThanOrEqual(geo.heroBottom + 1);
+    // Centered over the "I" at every size, so the R stays visible.
+    expect(Math.abs(geo.avatarCenter - geo.iCenter)).toBeLessThan(8);
     if (desktop) {
-      // Centered over the "I"; device past the end of the name.
-      expect(Math.abs(geo.avatarCenter - geo.iCenter)).toBeLessThan(8);
       expect(geo.deviceLeft).toBeGreaterThan(geo.lettersRight);
-    } else {
-      expect(geo.avatarCenterPct).toBeGreaterThan(40);
-      expect(geo.avatarCenterPct).toBeLessThan(60);
-      // Small device under the letters, beside (not over) the avatar.
+    } else if (geo.deviceVisible) {
+      // Tablet: small device under the letters, beside (not over) the avatar.
       expect(geo.deviceTop).toBeGreaterThanOrEqual(geo.lettersBottom);
       expect(geo.deviceLeft).toBeGreaterThanOrEqual(geo.avatarRight);
     }
   });
 
-  test("mode chips are hidden in full motion on phones", async ({ page, viewport }) => {
-    test.skip((viewport?.width ?? 0) >= 1280, "phones and tablets only");
+  test("phones hide the device, and the chips in full motion", async ({ page, viewport }) => {
+    test.skip((viewport?.width ?? 0) >= 768, "phones only");
     await page.goto("/");
+    await expect(page.locator("[data-device-stage]")).toBeHidden();
     await expect(page.getByText("Backend", { exact: true })).toHaveCount(2);
     await expect(page.getByText("Backend", { exact: true }).first()).toBeHidden();
     await expect(page.getByText("Backend", { exact: true }).last()).toBeHidden();
