@@ -15,7 +15,7 @@ permissions:
 jobs:
   quality:
     name: Lint, types, unit tests, build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # pinned: ubuntu-latest moves to 26.04 on 2026-10-19
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
@@ -41,7 +41,7 @@ jobs:
   e2e:
     name: E2E + accessibility
     needs: quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # pinned: ubuntu-latest moves to 26.04 on 2026-10-19
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
@@ -66,7 +66,7 @@ jobs:
   lighthouse:
     name: Lighthouse budget
     needs: quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # pinned: ubuntu-latest moves to 26.04 on 2026-10-19
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7

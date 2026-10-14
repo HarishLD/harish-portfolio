@@ -3,7 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { type Flip, type Gsap, loadFlip, loadGsap, onIdle, useMotion } from "@/components/motion";
+import {
+  type Flip,
+  type Gsap,
+  afterLoad,
+  loadFlip,
+  loadGsap,
+  onIdle,
+  useMotion,
+} from "@/components/motion";
 import { buttonClasses } from "@/components/ui";
 import { cx } from "@/lib/cx";
 import type { NavData } from "./types";
@@ -13,7 +21,7 @@ import type { NavData } from "./types";
  * once the first half-screen has scrolled past, and back again.
  * The morph is a GSAP Flip over transform/opacity: the ink plate behind the
  * dock and each link fly from their bar positions to their dock positions.
- * GSAP and Flip load on idle, so they never block first paint or hydration.
+ * GSAP and Flip load on idle, so they never block first paint, hydration or docking.
  */
 export function DesktopNav({ data }: { data: NavData }) {
   const motion = useMotion();
@@ -27,31 +35,36 @@ export function DesktopNav({ data }: { data: NavData }) {
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
-    let cancelled = false;
-    const load = async () => {
-      lib.current ??= { gsap: await loadGsap(), flip: await loadFlip() };
-      return lib.current;
-    };
-    const io = new IntersectionObserver(async ([entry]) => {
+    const controller = new AbortController();
+    const load = () =>
+      afterLoad(Promise.all([loadGsap(), loadFlip()]), controller.signal, ([gsap, flip]) => {
+        lib.current ??= { gsap, flip };
+      });
+    // Docking never waits on GSAP: it happens immediately, animated only once
+    // GSAP has loaded (on idle), so a slow or failed load can't block it.
+    const io = new IntersectionObserver(([entry]) => {
       // Below lg the sentinel is display:none (no offsetParent): the mobile nav is in charge.
       if (!entry || sentinel.offsetParent === null) return;
       const next = !entry.isIntersecting;
       if (next === dockedRef.current) return;
       dockedRef.current = next;
-      const { flip } = await load();
-      if (cancelled || !navRef.current) return;
-      // Capture the current layout before React swaps bar/dock classes.
-      flipState.current = flip.getState(navRef.current.querySelectorAll("[data-flip-id]"), {
-        props: "opacity,color,backgroundColor",
-      });
-      setDocked(dockedRef.current);
+      if (lib.current && navRef.current) {
+        // Capture the current layout before React swaps bar/dock classes.
+        flipState.current = lib.current.flip.getState(
+          navRef.current.querySelectorAll("[data-flip-id]"),
+          { props: "opacity,color,backgroundColor" },
+        );
+      } else {
+        load();
+      }
+      setDocked(next);
     });
     io.observe(sentinel);
     const cancelIdle = onIdle(() => {
-      if (sentinel.offsetParent !== null) void load();
+      if (sentinel.offsetParent !== null) load();
     });
     return () => {
-      cancelled = true;
+      controller.abort();
       cancelIdle();
       io.disconnect();
     };

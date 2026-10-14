@@ -20,9 +20,7 @@ describe("Home metrics", () => {
   it("shows platform reach on its own line", () => {
     render(<Home />);
     expect(
-      screen.getByText(
-        "100K+ downloads · 5K daily active users · 250+ franchise locations · <0.1% crash rate after launch",
-      ),
+      screen.getByText("Platform: 100K+ downloads · 5K DAU · 250+ locations"),
     ).toBeInTheDocument();
   });
 

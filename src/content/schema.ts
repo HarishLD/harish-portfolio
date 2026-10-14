@@ -16,7 +16,11 @@ export type Layer = z.infer<typeof layerSchema>;
 export const metricSchema = z.object({
   value: z.string().min(1),
   label: z.string().min(1),
+  /** Compact label for cards and one-line summaries ("5K DAU"). */
+  short: z.string().min(1),
   scope: z.enum(["platform", "own"]),
+  /** The one metric a work card leads with. */
+  featured: z.boolean().optional(),
 });
 export type Metric = z.infer<typeof metricSchema>;
 
@@ -30,6 +34,8 @@ export const projectSchema = z
     /** Client work uses a generic name and recreated screens; personal work may show real ones. */
     kind: z.enum(["client", "personal"]),
     role: z.string().min(1),
+    /** One short line for the work grid; the full `summary` is for the case study. */
+    cardSummary: z.string().min(1).max(80),
     summary: z.string().min(1),
     layers: z.array(layerSchema).min(1),
     stack: z.array(z.string().min(1)).min(1),
@@ -38,6 +44,10 @@ export const projectSchema = z
     highlights: z.array(z.string().min(1)).min(1),
     screens: z.enum(["recreated", "real"]),
     links: z.object({ live: httpsUrl.optional(), source: httpsUrl.optional() }).optional(),
+  })
+  .refine((p) => p.metrics.filter((m) => m.featured).length === 1, {
+    message: "Exactly one featured metric per project",
+    path: ["metrics"],
   })
   .refine((p) => p.kind === "personal" || p.screens === "recreated", {
     message: "Client projects must use recreated screens",

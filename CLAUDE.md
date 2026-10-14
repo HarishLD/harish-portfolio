@@ -17,9 +17,9 @@ Source of truth for all claims: `docs/resume-facts.md` (from the resume). Never 
 
 - [x] M0 Setup (Next.js 16, React 19, TS strict, Tailwind v4 tokens, self-hosted fonts, Vitest, Playwright + axe, Lighthouse CI, GitHub Actions)
 - [x] M1 Foundations: primitives, typed content layer + zod schema, nav (top bar → floating dock on desktop, full-screen menu on mobile), motion provider with reduced-motion
-- [x] M2 Hero: Name Wall static first (fast LCP), then fake-3D morph device + signal line on scroll
+- [x] M2 Hero: Name Wall static first (fast LCP), then fake-3D morph device + signal line on scroll (the morph moves to Layers in M4, see "M4 plan")
 - [ ] M3 Work: bento grid, layer filters, recreated screens, case studies (`/work/[slug]` pages + overlay)
-- [ ] M4 Layers (pinned desktop, swipe mobile), Path timeline, How I Work
+- [ ] M4 Layers device morph (pinned desktop, swipe mobile, see "M4 plan"), hero device back to a static phone, Path timeline, How I Work
 - [ ] M5 Contact, resume download, SEO (metadata, OG, JSON-LD, sitemap), switch robots to index
 - [ ] M6 QA and polish
 
@@ -28,6 +28,8 @@ Source of truth for all claims: `docs/resume-facts.md` (from the resume). Never 
 - ESLint 10: `package.json` `overrides` force the eslint peer for `eslint-plugin-import`, `eslint-plugin-jsx-a11y` and `eslint-plugin-react` (via `eslint-config-next`). Remove those overrides once the plugins declare ESLint 10 support (check with `npm view <plugin> peerDependencies`).
 - TypeScript stays on 5.x: TS 7 (native compiler) breaks typescript-eslint inside `eslint-config-next`. Dependabot ignores TS majors; lift that once typescript-eslint supports TS 7.
 - `@types/node` follows the Node line in `.nvmrc` (22); Dependabot ignores its majors.
+- CI runners are pinned to `ubuntu-24.04` (ubuntu-latest moves to 26.04 on 2026-10-19). Move deliberately once Playwright and Lighthouse are verified there.
+- Unit tests never load real GSAP: `vitest.setup.ts` mocks the loaders with `src/test/gsap-mock.ts` and makes any real `gsap` import throw. Consume loaders only through `afterLoad` (cancel-safe) or `useLazyGsap`.
 - `npm audit` shows a dev-only `braces` advisory (GHSA-vfj7-8cjw-p6xm) with no upstream fix; CI audits production deps only.
 
 ## Positioning
@@ -40,11 +42,28 @@ Location-neutral: no city on the site. Contact = email, LinkedIn, GitHub, resume
 Name: "Signal". Ink & Signal restraint + cinematic hero. Must not feel like a film template or generic dev portfolio. No film vocabulary (scene, take, REC).
 
 - Hero "Name Wall": oversized HARISH (Anton), avatar standing in front of the letters, fake-3D device beside it, serif line "builds across every layer.", CTAs "See the work" (primary) + "Download resume". Name, role, CTA readable instantly.
-- Morph: device goes phone → browser → server on scroll. Fake 3D with CSS/SVG transforms first; true 3D only if this lacks impact (desktop only).
+- Morph: lives in the Layers section (from M4), not the hero. Device goes phone → browser → server rack across three pinned chapters. Fake 3D with CSS/SVG transforms first; true 3D only if this lacks impact (desktop only).
+- Hero device: a static tilted phone beside the avatar on desktop (no scroll morph, no chips); hidden below md.
 - Signal: the lime line/dot that threads sections and ends as the contact CTA.
 - Nav: desktop top bar morphs into floating bottom dock (avatar head + links + "Let's talk"). Mobile: menu button → full-screen menu with huge Anton links.
 - Projects: interactive bento, filters All/Mobile/Web/Backend, recreated screens, real metrics, expandable case studies.
 - Avatar placement: bottom-anchored or seated on a line, overlapping type for depth. Missing poses render nothing (no placeholders in production).
+
+## M4 plan: Layers device morph (recorded 2026-10-14)
+
+Why: the hero morph finished within ~280px of scroll, too fast to notice. It moves to Layers, where it gets room.
+
+- Hero: device stays a static tilted phone (desktop only, hidden below md). Remove the scroll morph, the ScrollTrigger load and the Mobile/Web/Backend chips from the hero.
+- Layers (desktop): section pinned; the device stays centered while scrolling through three chapters, Mobile → Web → Backend. Beside it, the chapter text and one resume-backed proof point change per chapter, with a progress indicator (1/3, 2/3, 3/3) and a "Skip Layers" link that jumps past the pinned section.
+- Morph: phone → browser → server rack. During each transition the device turns in 3D (a smooth turn, not a spin) and settles at a fixed angle per chapter. Each state holds while its chapter is on screen; scrolling back reverses cleanly (scrub with holds between transitions, no snapping jumps).
+- Tech logos pop out of the device per chapter, from resume-facts.md only, max 5:
+  - Mobile: React Native, TypeScript, Kotlin, Swift, Firebase
+  - Web: React, Next.js, TypeScript, Redux
+  - Backend: Node.js, PostgreSQL, Prisma, Salesforce, WebSockets
+  Monochrome ink/paper marks; the current layer's own mark highlighted in signal lime (respect the ~5% signal rule). They float out around the device, stay while the chapter is active, and tuck back in when it changes. Inline simple-icons SVG paths (copied in, CC0), no icon library bundle. Check each exists in simple-icons first: there is no generic WebSockets mark, so use a small text-mark fallback for any missing one, never an invented logo.
+- Performance: transform/opacity only; load GSAP + ScrollTrigger with the section (`useLazyGsap`, `load: "visible"`); stay within the 50KB own-JS budget.
+- Mobile (below md): no pinning. Three swipeable chapter cards (scroll-snap), each showing its device state and its logos static.
+- Reduced motion: no pin, no rotation, no pop-outs; three static steps with the logos shown in place.
 
 ## Tokens (in `src/app/globals.css`)
 
@@ -59,9 +78,9 @@ Avatar sizes: hero 72vh (max 680), section 470, case study 200, dock 44 circle.
 
 - One animation system: GSAP (+ ScrollTrigger, Flip, SplitText). No Motion/Framer, no Lenis, no smooth-scroll hijacking.
 - Durations: micro 200ms, UI 450ms, section 800ms. Ease cubic-bezier(.2,.8,.2,1) for entrances.
-- Only the hero morph and the Layers chapters are scroll-scrubbed; Layers is the only pinned section.
+- Only the Layers chapters are scroll-driven; Layers is the only pinned section (desktop only). The hero has no scroll animation (from M4).
 - Animate transform/opacity only. No CSS filters on scroll.
-- Reduced motion: no scrub, no parallax, 150ms fades; morph becomes three tappable states. Content never waits on animation.
+- Reduced motion: no scrub, no pin, no parallax, 150ms fades; Layers becomes three static steps. Content never waits on animation.
 - React Bits pieces (copy in and trim, GSAP variants only): SplitText, CountUp, SpotlightCard, Magnet, DecryptedText (labels only).
 
 ## Content rules

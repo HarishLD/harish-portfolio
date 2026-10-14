@@ -1,7 +1,7 @@
 "use client";
 
 import { type RefObject, useEffect, useRef } from "react";
-import { type Gsap, type GsapContext, loadGsap, onIdle } from "./gsap";
+import { type Gsap, type GsapContext, afterLoad, loadGsap, onIdle } from "./gsap";
 
 type Options = {
   /**
@@ -35,14 +35,18 @@ export function useLazyGsap(
   useEffect(() => {
     const el = scope.current;
     if (!el) return;
-    let cancelled = false;
+    // Aborted on unmount or deps change: a load that resolves later never runs setup.
+    const controller = new AbortController();
     let ctx: GsapContext | undefined;
 
     const start = () => {
-      void Promise.all([loadGsap(), ...pluginsRef.current.map((p) => p())]).then(([gsap]) => {
-        if (cancelled) return;
-        ctx = gsap.context(() => setupRef.current(gsap), el);
-      });
+      afterLoad(
+        Promise.all([loadGsap(), ...pluginsRef.current.map((p) => p())]),
+        controller.signal,
+        ([gsap]) => {
+          ctx = gsap.context(() => setupRef.current(gsap), el);
+        },
+      );
     };
 
     let stop: () => void;
@@ -62,7 +66,7 @@ export function useLazyGsap(
     }
 
     return () => {
-      cancelled = true;
+      controller.abort();
       stop();
       ctx?.revert();
     };

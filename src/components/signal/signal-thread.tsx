@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { loadGsap, loadScrollTrigger, onIdle, useMotion } from "@/components/motion";
+import { afterLoad, loadGsap, loadScrollTrigger, onIdle, useMotion } from "@/components/motion";
 
 /**
  * Draws each signal segment once, when its section arrives: the line grows
@@ -14,37 +14,41 @@ export function SignalThread() {
 
   useEffect(() => {
     if (motion.reduced) return;
-    let cancelled = false;
+    const controller = new AbortController();
     let revert: (() => void) | undefined;
 
-    const cancelIdle = onIdle(async () => {
-      const [gsap, ScrollTrigger] = await Promise.all([loadGsap(), loadScrollTrigger()]);
-      if (cancelled) return;
-      const ctx = gsap.context(() => {
-        for (const line of document.querySelectorAll<HTMLElement>("[data-signal-line]")) {
-          if (line.getBoundingClientRect().top < window.innerHeight) continue;
-          const stroke = line.querySelector("[data-signal-stroke]");
-          const head = line.querySelector("[data-signal-head]");
-          gsap.set(stroke, { scaleY: 0 });
-          gsap.set(head, { scale: 0 });
-          ScrollTrigger.create({
-            trigger: line,
-            start: "top 85%",
-            once: true,
-            onEnter: () => {
-              gsap
-                .timeline({ defaults: { ease: motion.ease } })
-                .to(head, { scale: 1, duration: motion.duration.micro })
-                .to(stroke, { scaleY: 1, duration: motion.duration.section }, "<");
-            },
+    const cancelIdle = onIdle(() =>
+      afterLoad(
+        Promise.all([loadGsap(), loadScrollTrigger()]),
+        controller.signal,
+        ([gsap, ScrollTrigger]) => {
+          const ctx = gsap.context(() => {
+            for (const line of document.querySelectorAll<HTMLElement>("[data-signal-line]")) {
+              if (line.getBoundingClientRect().top < window.innerHeight) continue;
+              const stroke = line.querySelector("[data-signal-stroke]");
+              const head = line.querySelector("[data-signal-head]");
+              gsap.set(stroke, { scaleY: 0 });
+              gsap.set(head, { scale: 0 });
+              ScrollTrigger.create({
+                trigger: line,
+                start: "top 85%",
+                once: true,
+                onEnter: () => {
+                  gsap
+                    .timeline({ defaults: { ease: motion.ease } })
+                    .to(head, { scale: 1, duration: motion.duration.micro })
+                    .to(stroke, { scaleY: 1, duration: motion.duration.section }, "<");
+                },
+              });
+            }
           });
-        }
-      });
-      revert = () => ctx.revert();
-    });
+          revert = () => ctx.revert();
+        },
+      ),
+    );
 
     return () => {
-      cancelled = true;
+      controller.abort();
       cancelIdle();
       revert?.();
     };

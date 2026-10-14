@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { type Gsap, loadGsap, useMotion } from "@/components/motion";
+import { type Gsap, afterLoad, loadGsap, useMotion, useMountedSignal } from "@/components/motion";
 import { buttonClasses } from "@/components/ui";
 import type { NavData } from "./types";
 
@@ -19,9 +19,11 @@ export function MobileNav({ data }: { data: NavData }) {
   const gsapRef = useRef<Gsap | null>(null);
   const [open, setOpen] = useState(false);
 
+  const mounted = useMountedSignal();
+
   function preload() {
-    if (gsapRef.current) return;
-    void loadGsap().then((gsap) => {
+    if (gsapRef.current || !mounted.current) return;
+    afterLoad(loadGsap(), mounted.current.signal, (gsap) => {
       gsapRef.current = gsap;
     });
   }

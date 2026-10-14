@@ -21,33 +21,67 @@ let core: Promise<Gsap> | undefined;
 let flip: Promise<Flip> | undefined;
 let scrollTrigger: Promise<ScrollTrigger> | undefined;
 
+// A failed chunk load (offline, deploy in between) clears the memo so a later
+// trigger can retry instead of caching the rejection forever.
+function retryable<T>(load: () => Promise<T>, clear: () => void): Promise<T> {
+  return load().catch((error: unknown) => {
+    clear();
+    throw error;
+  });
+}
+
 export function loadGsap(): Promise<Gsap> {
-  core ??= Promise.all([import("gsap"), import("gsap/CustomEase")]).then(
-    ([{ gsap }, { CustomEase }]) => {
-      gsap.registerPlugin(CustomEase);
-      CustomEase.create(SIGNAL_EASE, "0.2,0.8,0.2,1");
-      return gsap;
-    },
+  core ??= retryable(
+    () =>
+      Promise.all([import("gsap"), import("gsap/CustomEase")]).then(
+        ([{ gsap }, { CustomEase }]) => {
+          gsap.registerPlugin(CustomEase);
+          CustomEase.create(SIGNAL_EASE, "0.2,0.8,0.2,1");
+          return gsap;
+        },
+      ),
+    () => (core = undefined),
   );
   return core;
 }
 
 export function loadFlip(): Promise<Flip> {
-  flip ??= Promise.all([loadGsap(), import("gsap/Flip")]).then(([gsap, { Flip }]) => {
-    gsap.registerPlugin(Flip);
-    return Flip;
-  });
+  flip ??= retryable(
+    () =>
+      Promise.all([loadGsap(), import("gsap/Flip")]).then(([gsap, { Flip }]) => {
+        gsap.registerPlugin(Flip);
+        return Flip;
+      }),
+    () => (flip = undefined),
+  );
   return flip;
 }
 
 export function loadScrollTrigger(): Promise<ScrollTrigger> {
-  scrollTrigger ??= Promise.all([loadGsap(), import("gsap/ScrollTrigger")]).then(
-    ([gsap, { ScrollTrigger }]) => {
-      gsap.registerPlugin(ScrollTrigger);
-      return ScrollTrigger;
-    },
+  scrollTrigger ??= retryable(
+    () =>
+      Promise.all([loadGsap(), import("gsap/ScrollTrigger")]).then(([gsap, { ScrollTrigger }]) => {
+        gsap.registerPlugin(ScrollTrigger);
+        return ScrollTrigger;
+      }),
+    () => (scrollTrigger = undefined),
   );
   return scrollTrigger;
+}
+
+/**
+ * The one way to consume a loader: runs `use` with the loaded value only if
+ * `signal` has not been aborted by then (the component unmounted, the effect
+ * re-ran, or Activity hid it). A failed load is swallowed: animation is an
+ * enhancement, content never depends on it.
+ */
+export function afterLoad<T>(load: Promise<T>, signal: AbortSignal, use: (value: T) => void) {
+  load.then(
+    (value) => {
+      if (!signal.aborted) use(value);
+    },
+    () => {},
+  );
 }
 
 /** Runs `fn` when the main thread is idle (after hydration and LCP work). */
