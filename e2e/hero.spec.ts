@@ -14,35 +14,60 @@ test.describe("hero", () => {
     });
   });
 
-  test("composition: avatar under RIS, device clear of the letters", async ({ page }) => {
+  test("composition follows the hero rules", async ({ page, viewport }) => {
+    const desktop = (viewport?.width ?? 0) >= 1280;
     await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
     const geo = await page.evaluate(() => {
+      const R = (el: Element | Range) => el.getBoundingClientRect();
       const h1 = document.querySelector("h1")!;
+      const text = h1.firstChild!;
       const range = document.createRange();
       range.selectNodeContents(h1);
-      const run = range.getClientRects()[0]!;
-      const box = h1.getBoundingClientRect();
-      const avatar = document.querySelector('img[alt^="Illustrated"]')!.getBoundingClientRect();
-      const device = document.querySelector("[data-device-stage]")!.getBoundingClientRect();
-      const hero = document.querySelector("[data-hero]")!.getBoundingClientRect();
+      const run = R(range);
+      range.setStart(text, 3);
+      range.setEnd(text, 4);
+      const letterI = R(range);
+      const avatar = R(document.querySelector('img[alt^="Illustrated"]')!);
+      const device = R(document.querySelector("[data-device-stage]")!.parentElement!);
+      const hero = R(document.querySelector("[data-hero]")!);
       return {
+        avatarCenter: avatar.left + avatar.width / 2,
+        iCenter: letterI.left + letterI.width / 2,
         avatarCenterPct: ((avatar.left + avatar.width / 2 - run.left) / run.width) * 100,
         avatarTop: avatar.top,
-        lettersTop: box.top,
-        lettersBottom: box.bottom,
+        avatarRight: avatar.right,
+        avatarBottom: avatar.bottom,
+        lettersTop: R(h1).top,
+        lettersBottom: R(h1).bottom,
         lettersRight: run.right,
         deviceLeft: device.left,
         deviceTop: device.top,
-        avatarBottom: avatar.bottom,
         heroBottom: hero.bottom,
       };
     });
-    expect(geo.avatarCenterPct).toBeGreaterThan(40);
-    expect(geo.avatarCenterPct).toBeLessThan(60);
-    // Head overlaps the upper half of the letters.
+    // Head over the upper half of the letters; avatar bottom-anchored.
     expect(geo.avatarTop).toBeLessThan(geo.lettersTop + (geo.lettersBottom - geo.lettersTop) / 2);
-    expect(geo.deviceLeft >= geo.lettersRight || geo.deviceTop >= geo.lettersBottom).toBe(true);
     expect(geo.avatarBottom).toBeLessThanOrEqual(geo.heroBottom + 1);
+    if (desktop) {
+      // Centered over the "I"; device past the end of the name.
+      expect(Math.abs(geo.avatarCenter - geo.iCenter)).toBeLessThan(8);
+      expect(geo.deviceLeft).toBeGreaterThan(geo.lettersRight);
+    } else {
+      expect(geo.avatarCenterPct).toBeGreaterThan(40);
+      expect(geo.avatarCenterPct).toBeLessThan(60);
+      // Small device under the letters, beside (not over) the avatar.
+      expect(geo.deviceTop).toBeGreaterThanOrEqual(geo.lettersBottom);
+      expect(geo.deviceLeft).toBeGreaterThanOrEqual(geo.avatarRight);
+    }
+  });
+
+  test("mode chips are hidden in full motion on phones", async ({ page, viewport }) => {
+    test.skip((viewport?.width ?? 0) >= 1280, "phones and tablets only");
+    await page.goto("/");
+    await expect(page.getByText("Backend", { exact: true })).toHaveCount(2);
+    await expect(page.getByText("Backend", { exact: true }).first()).toBeHidden();
+    await expect(page.getByText("Backend", { exact: true }).last()).toBeHidden();
   });
 
   test("the avatar is preloaded for LCP", async ({ page }) => {
@@ -86,8 +111,18 @@ test.describe("hero", () => {
   test.describe("reduced motion", () => {
     test.use({ reducedMotion: "reduce" });
 
-    test("the three states are tappable and scrolling does not morph", async ({ page }) => {
+    test("the three states are tappable and scrolling does not morph", async ({
+      page,
+      viewport,
+    }) => {
       await page.goto("/");
+      if ((viewport?.width ?? 0) < 1280) {
+        // On phones the chips sit below the hero rule, never over the avatar.
+        const chips = await page.getByRole("group", { name: "Device layer" }).boundingBox();
+        const avatar = await page.getByAltText(/avatar of harish/i).boundingBox();
+        expect(chips!.y).toBeGreaterThanOrEqual(avatar!.y + avatar!.height);
+      }
+
       const stage = page.locator("[data-device-stage]");
       const group = page.getByRole("group", { name: "Device layer" });
       await group.getByRole("button", { name: "Web" }).click();

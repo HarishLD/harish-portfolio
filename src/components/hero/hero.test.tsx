@@ -45,15 +45,23 @@ describe("Hero", () => {
     expect(screen.queryByRole("link", { name: /resume/i })).toBeNull();
   });
 
-  it("starts the device as a phone, with layers as passive labels in full motion", () => {
+  it("starts the device as a phone", () => {
     mockReducedMotion(false);
     const { container } = renderHero();
     expect(stage(container)).toHaveAttribute("data-state", "mobile");
-    expect(screen.queryByRole("button", { name: "Backend" })).toBeNull();
-    expect(screen.getByText("Backend")).toBeInTheDocument();
   });
 
-  it("turns the morph into three tappable states under reduced motion", async () => {
+  it("lets CSS pick the chip row, so server HTML matches every preference", () => {
+    mockReducedMotion(false);
+    renderHero();
+    // Passive labels: full motion on desktop only. Buttons: reduced motion only.
+    const passive = screen.getAllByText("Backend").find((el) => el.tagName === "SPAN");
+    expect(passive?.parentElement?.className).toMatch(/\bhidden\b.*motion-safe:xl:flex/);
+    const group = screen.getByRole("group", { name: "Device layer", hidden: true });
+    expect(group.className).toMatch(/\bhidden\b.*motion-reduce:flex/);
+  });
+
+  it("switches state when a chip is tapped (reduced motion)", async () => {
     mockReducedMotion(true);
     const user = userEvent.setup();
     const { container } = renderHero();

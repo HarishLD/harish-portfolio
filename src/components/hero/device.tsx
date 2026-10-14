@@ -4,7 +4,8 @@ import { cx } from "@/lib/cx";
 /**
  * The hero device in its three forms, stacked in one square stage:
  * phone (mobile) → browser (web) → server (backend).
- * Pure CSS fake 3D: a tilted stage (rotateY -24deg, rotateX 8deg), matte ink
+ * Pure CSS fake 3D on desktop: a tilted stage (rotateY -24deg, rotateX 8deg),
+ * flat below xl (tilted layers render with stepped edges on high-DPR phones). Matte ink
  * bodies with a 9px bezel, a hard offset shadow and one soft floor shadow.
  * Screens are abstract UI, not client product screens.
  *
@@ -15,7 +16,7 @@ import { cx } from "@/lib/cx";
 const body =
   "absolute rounded-device bg-ink p-[var(--bezel)] shadow-[14px_16px_0_var(--color-line)]";
 const face =
-  "motion-fade opacity-0 transition-opacity duration-(--duration-ui) will-change-transform";
+  "motion-fade opacity-0 transition-opacity duration-(--duration-ui) xl:will-change-transform";
 
 function Bar({ className }: { className?: string }) {
   return <span className={cx("block rounded-pill bg-ink-3", className)} />;
@@ -127,7 +128,7 @@ export function Device({ state, className }: { state: Layer; className?: string 
   return (
     <div
       aria-hidden="true"
-      className={cx("relative aspect-square [perspective:1400px]", className)}
+      className={cx("relative aspect-square xl:[perspective:1400px]", className)}
     >
       {/* One soft shadow on paper, as a gradient (no filters). */}
       <span

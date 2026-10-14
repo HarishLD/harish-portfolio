@@ -16,10 +16,19 @@ const LAYERS: { id: Layer; label: string }[] = [
  * Hero device island. Renders the phone immediately (static HTML, no JS needed).
  * Full motion: on idle, loads GSAP + ScrollTrigger and scrubs phone → browser →
  * server over the first stretch of scroll, finishing while the device is still
- * fully in view (not pinned). Reduced motion: no scrub, no drift;
- * the three states become buttons with a 150ms fade.
+ * fully in view (not pinned). Reduced motion: no scrub; the three states
+ * become buttons with a 150ms fade.
  */
-export function HeroMorph({ className }: { className?: string }) {
+type HeroMorphProps = {
+  /** Placement of the desktop column (xl). */
+  className?: string;
+  /** Placement of the device in the hero grid below xl. */
+  deviceClassName?: string;
+  /** Placement of the reduced-motion chips in the hero grid below xl. */
+  chipsClassName?: string;
+};
+
+export function HeroMorph({ className, deviceClassName, chipsClassName }: HeroMorphProps) {
   const motion = useMotion();
   const scope = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<Layer>("mobile");
@@ -71,37 +80,46 @@ export function HeroMorph({ className }: { className?: string }) {
     { load: "idle", plugins: [loadScrollTrigger], deps: [motion.reduced] },
   );
 
+  // The root is `display: contents` below xl so the hero grid can place the
+  // device and the chips independently; on xl it is a column beside the name.
+  // Which chip row shows is decided by CSS media queries, not JS, so the
+  // server HTML already has the right layout (no shift after hydration).
   return (
-    <div ref={scope} className={cx("flex flex-col gap-4", className)}>
-      <Device state={state} className="w-full" />
-      {motion.reduced ? (
-        <div role="group" aria-label="Device layer" className={rowClass}>
-          {LAYERS.map((l) => (
-            <button
-              key={l.id}
-              type="button"
-              aria-pressed={state === l.id}
-              onClick={() => setState(l.id)}
-              className={labelClass(state === l.id)}
-            >
-              {l.label}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <p className={rowClass}>
-          {LAYERS.map((l) => (
-            <span key={l.id} className={labelClass(state === l.id)}>
-              {l.label}
-            </span>
-          ))}
-        </p>
-      )}
+    <div
+      ref={scope}
+      className={cx("contents xl:flex xl:flex-col xl:items-center xl:gap-3", className)}
+    >
+      <Device state={state} className={cx("xl:w-full", deviceClassName)} />
+      {/* Full motion, desktop only: passive indicator of the scrubbed state. */}
+      <p className={cx(rowClass, "hidden motion-safe:xl:flex")}>
+        {LAYERS.map((l) => (
+          <span key={l.id} className={labelClass(state === l.id)}>
+            {l.label}
+          </span>
+        ))}
+      </p>
+      {/* Reduced motion, all sizes: the three states become buttons. */}
+      <div
+        role="group"
+        aria-label="Device layer"
+        className={cx(rowClass, "hidden motion-reduce:flex", chipsClassName)}
+      >
+        {LAYERS.map((l) => (
+          <button
+            key={l.id}
+            type="button"
+            aria-pressed={state === l.id}
+            onClick={() => setState(l.id)}
+            className={labelClass(state === l.id)}
+          >
+            {l.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
 
-// Paper pill keeps the labels legible where they overlap the avatar.
 const rowClass = "flex rounded-pill bg-paper p-1";
 
 function labelClass(active: boolean) {
