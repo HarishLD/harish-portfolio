@@ -1,10 +1,15 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
-import { afterEach, vi } from "vitest";
+import { afterAll, afterEach, vi } from "vitest";
+import { settleLoaders } from "@/components/motion/gsap";
 
 afterEach(() => {
   cleanup();
 });
+
+// Lazy GSAP imports started by a test (preload on hover/focus) must finish
+// before the environment is torn down, or Vitest reports unhandled errors.
+afterAll(() => settleLoaders());
 
 // jsdom gaps: browser APIs the nav and motion provider rely on.
 if (typeof window !== "undefined") {

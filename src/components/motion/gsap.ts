@@ -50,6 +50,15 @@ export function loadScrollTrigger(): Promise<ScrollTrigger> {
   return scrollTrigger;
 }
 
+/**
+ * Resolves once every loader that has already started has finished, without
+ * starting new ones. Tests await it so lazy imports never outlive the test
+ * environment.
+ */
+export function settleLoaders(): Promise<unknown> {
+  return Promise.allSettled([core, flip, scrollTrigger].filter(Boolean));
+}
+
 /** Runs `fn` when the main thread is idle (after hydration and LCP work). */
 export function onIdle(fn: () => void): () => void {
   if (typeof window.requestIdleCallback === "function") {
