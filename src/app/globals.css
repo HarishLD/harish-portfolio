@@ -88,4 +88,10 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  /* The one transition kept under reduced motion: a 150ms fade (e.g. device states). */
+  .motion-fade {
+    transition-property: opacity !important;
+    transition-duration: 150ms !important;
+  }
 }

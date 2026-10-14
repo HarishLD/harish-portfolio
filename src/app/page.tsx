@@ -1,14 +1,7 @@
+import { Hero } from "@/components/hero";
 import { MetricLines } from "@/components/metric-lines";
-import {
-  Accent,
-  ButtonLink,
-  Card,
-  Container,
-  Display,
-  Label,
-  Section,
-  SignalDot,
-} from "@/components/ui";
+import { SignalThread } from "@/components/signal";
+import { ButtonLink, Card, Display, Label, Section, SignalDot } from "@/components/ui";
 import { experience, profile, projects, skills } from "@/content";
 
 const layerLabel = { mobile: "Mobile", web: "Web", backend: "Backend" } as const;
@@ -23,34 +16,16 @@ function formatMonth(ym: string) {
 }
 
 /**
- * M1 scaffold: real content wired through the primitives so navigation and the
- * content layer can be reviewed. Each section is replaced by its designed
- * version in M2 (hero), M3 (work), M4 (layers, path, how I work), M5 (contact).
+ * Home. The hero is final (M2); the other sections are the M1 scaffold, replaced
+ * by their designed versions in M3 (work), M4 (layers, path, how I work), M5 (contact).
  */
 export default function Home() {
   return (
     <>
-      <Container className="flex min-h-[calc(100dvh-4rem)] flex-col justify-center gap-8 py-18 lg:min-h-[calc(100dvh-5rem)]">
-        <Label className="text-muted">{profile.role}</Label>
-        <Display as="h1" size="name">
-          {profile.shortName}
-        </Display>
-        <Accent as="p" className="text-[clamp(2rem,3.8vw,3.4rem)] leading-none">
-          {profile.tagline}
-        </Accent>
-        <div className="flex flex-wrap gap-3">
-          <ButtonLink href="/#work" size="lg">
-            See the work
-          </ButtonLink>
-          {profile.resumeUrl && (
-            <ButtonLink href={profile.resumeUrl} variant="secondary" size="lg" download>
-              Download resume
-            </ButtonLink>
-          )}
-        </div>
-      </Container>
+      <Hero profile={profile} />
+      <SignalThread />
 
-      <Section id="work" aria-labelledby="work-title">
+      <Section id="work" signal="through" aria-labelledby="work-title">
         <Label className="text-muted">Selected work</Label>
         <Display id="work-title" className="mt-4">
           Work
@@ -72,7 +47,7 @@ export default function Home() {
         </ul>
       </Section>
 
-      <Section id="layers" tone="ink" aria-labelledby="layers-title">
+      <Section id="layers" tone="ink" signal="through" aria-labelledby="layers-title">
         <Label className="text-fog">Mobile · Web · Backend</Label>
         <Display id="layers-title" className="mt-4">
           Layers
@@ -94,7 +69,7 @@ export default function Home() {
         </p>
       </Section>
 
-      <Section id="path" aria-labelledby="path-title">
+      <Section id="path" signal="through" aria-labelledby="path-title">
         <Display id="path-title">Path</Display>
         <ol className="mt-12 flex flex-col gap-10">
           {experience.map((r) => (
@@ -112,7 +87,12 @@ export default function Home() {
         </ol>
       </Section>
 
-      <Section id="how-i-work" aria-labelledby="how-title" className="border-t border-line">
+      <Section
+        id="how-i-work"
+        signal="through"
+        aria-labelledby="how-title"
+        className="border-t border-line"
+      >
         <Display id="how-title">How I work</Display>
         <ul className="mt-12 grid max-w-[70ch] gap-3">
           {profile.howIWork.map((line) => (
@@ -121,7 +101,7 @@ export default function Home() {
         </ul>
       </Section>
 
-      <Section id="contact" tone="ink" aria-labelledby="contact-title">
+      <Section id="contact" tone="ink" signal="end" aria-labelledby="contact-title">
         <div className="flex items-center gap-3">
           <SignalDot tone="ink" />
           <Label className="text-fog">Contact</Label>

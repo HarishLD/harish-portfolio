@@ -7,7 +7,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   {
     // Client islands get content as props; importing @/content would ship zod to the browser.
-    files: ["src/components/{nav,motion}/**/*.{ts,tsx}"],
+    files: ["src/components/{nav,motion,hero,signal}/**/*.{ts,tsx}"],
     ignores: ["src/components/nav/index.tsx", "**/*.test.tsx"],
     rules: {
       "@typescript-eslint/no-restricted-imports": [
