@@ -40,6 +40,27 @@ describe("content", () => {
     expect(platform).toEqual(expect.arrayContaining(["100K+", "5K", "250+"]));
   });
 
+  it("credits the Pet Care hyper-care crash rate to my work, Healthcare's to the platform", () => {
+    const crash = (slug: string) =>
+      projects.find((p) => p.slug === slug)!.metrics.find((m) => m.value === "<0.1%")!;
+    expect(crash("pet-care-platform").scope).toBe("own");
+    expect(crash("pet-care-platform").label).toBe("crash rate during the hyper-care I owned");
+    expect(crash("healthcare-records-platform").scope).toBe("platform");
+  });
+
+  it("puts the L2 Tech Lead bullet second for Pet Care", () => {
+    const pet = projects.find((p) => p.slug === "pet-care-platform")!;
+    expect(pet.highlights[1]).toMatch(/^As L2 Technical Lead/);
+    expect(pet.highlights.some((h) => /slow-query tuning/.test(h))).toBe(true);
+  });
+
+  it("gives every project a short card summary", () => {
+    for (const p of projects) {
+      expect(p.cardSummary.length).toBeLessThanOrEqual(80);
+      expect(p.cardSummary).not.toMatch(/…|\.\.\./);
+    }
+  });
+
   it("only uses metric values that appear in the resume facts", () => {
     for (const m of projects.flatMap((p) => p.metrics)) {
       const core = m.value.replace(/^[~<]/, "").split(" → ")[0]!;

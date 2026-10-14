@@ -7,10 +7,21 @@ export const projects: Project[] = [
     name: "Pet Care Platform",
     kind: "client",
     role: "Software Engineer, then L2 Technical Lead",
+    cardSummary: "Mobile, web and backend for a pet care platform across 250+ locations.",
     summary:
       "React Native apps and a mobile-first React.js web version for a pet care and wellness business, backed by Node.js REST APIs, SQL and Salesforce CRM.",
     layers: ["mobile", "web", "backend"],
-    stack: ["React Native", "React.js", "Node.js", "SQL", "Salesforce CRM"],
+    stack: [
+      "React Native",
+      "React.js",
+      "TypeScript",
+      "Redux-Saga",
+      "Node.js",
+      "SQL",
+      "WebSockets",
+      "Salesforce CRM",
+      "Jest",
+    ],
     metrics: [
       { value: "100K+", label: "downloads", short: "downloads", scope: "platform" },
       { value: "5K", label: "daily active users", short: "DAU", scope: "platform" },
@@ -40,11 +51,18 @@ export const projects: Project[] = [
         short: "sync failures/day",
         scope: "own",
       },
-      { value: "<0.1%", label: "crash rate after launch", short: "crash rate", scope: "platform" },
+      {
+        value: "<0.1%",
+        label: "crash rate during the hyper-care I owned",
+        short: "crash rate (hyper-care)",
+        scope: "own",
+      },
     ],
     highlights: [
       "Progressed from Phase 1 contributor to Phase 2 L2 Technical Lead for the entire platform.",
+      "As L2 Technical Lead: owned technical delivery with the UX, Cloud, CRM and Security teams; code reviews, design discussions and mentoring.",
       "Built the booking and scheduling module end to end: mobile and web clients, Node.js REST APIs, SQL and Salesforce CRM, with interval overlap detection and real-time CRM sync.",
+      "Node.js REST services and SQL for booking and payments: root-cause analysis, slow-query tuning and improved API error handling.",
       "Real-time video streaming and in-app payments: WebSocket connection management, exponential-backoff reconnection, adaptive bitrate for variable mobile networks.",
       "Standardized data fetching, retry and error recovery with reusable components, custom Hooks and Redux-Saga (MVVM).",
       "Sustained 60fps scrolling across mobile, tablet and desktop, and led the production cutover from the legacy app.",
@@ -57,6 +75,7 @@ export const projects: Project[] = [
     name: "Healthcare Records Platform",
     kind: "client",
     role: "Core engineer, 5-member team",
+    cardSummary: "Records, appointments and caregiver sharing on mobile and web.",
     summary:
       "React Native apps and a React.js web version for medical records, appointment tracking, wellness logs and caregiver document sharing. Launched May 2026.",
     layers: ["mobile", "web"],
@@ -85,6 +104,7 @@ export const projects: Project[] = [
     name: "Enterprise Product Naming Platform",
     kind: "client",
     role: "Software Engineering Analyst",
+    cardSummary: "AI-assisted product naming with real-time suggestions, built in 2 weeks.",
     summary:
       "An AI-assisted naming platform that classifies products by business type and attributes and suggests context-aware names in real time.",
     layers: ["web"],
@@ -111,6 +131,7 @@ export const projects: Project[] = [
     name: "Full Stack Notes App",
     kind: "personal",
     role: "Personal project",
+    cardSummary: "Full stack notes with auth, tags and search, built test-first.",
     summary:
       "A full stack notes app with JWT auth, tagging and filtered search on PostgreSQL, built test-first.",
     layers: ["web", "backend"],
@@ -141,6 +162,7 @@ export const projects: Project[] = [
     name: "Dynamic Form + PDF Platform",
     kind: "client",
     role: "Software Engineering Analyst",
+    cardSummary: "A 5-step form and a 6-page PDF engine, shipped in 4 days.",
     summary:
       "A 5-step form workflow with field-level validation and a dynamic PDF generation engine.",
     layers: ["web"],

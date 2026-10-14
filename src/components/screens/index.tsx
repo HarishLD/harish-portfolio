@@ -37,7 +37,7 @@ const screens: Record<string, ScreenSet> = {
     ],
   },
   "healthcare-records-platform": {
-    card: <HealthRecordsPhone className="mx-auto w-[56%] max-w-60" />,
+    card: <HealthRecordsPhone className="mx-auto w-[50%] max-w-56" />,
     figures: [
       {
         node: <HealthRecordsPhone className="mx-auto w-full max-w-72" />,

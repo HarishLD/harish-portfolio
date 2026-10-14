@@ -33,7 +33,7 @@ export default function RootLayout({ children, modal }: LayoutProps<"/">) {
       <body>
         <a
           href="#main"
-          className="fixed top-3 left-3 z-50 -translate-y-24 rounded-pill bg-ink px-5 py-3 text-paper focus-visible:translate-y-0"
+          className="sr-only z-50 rounded-pill bg-ink px-5 py-3 text-paper focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3"
         >
           Skip to content
         </a>

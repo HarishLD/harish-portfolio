@@ -34,6 +34,8 @@ export const projectSchema = z
     /** Client work uses a generic name and recreated screens; personal work may show real ones. */
     kind: z.enum(["client", "personal"]),
     role: z.string().min(1),
+    /** One short line for the work grid; the full `summary` is for the case study. */
+    cardSummary: z.string().min(1).max(80),
     summary: z.string().min(1),
     layers: z.array(layerSchema).min(1),
     stack: z.array(z.string().min(1)).min(1),

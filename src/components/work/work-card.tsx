@@ -66,8 +66,8 @@ export function WorkCard({ project, flagship }: { project: Project; flagship?: b
           <span className="sr-only">, case study</span>
         </Link>
       </h3>
-      <p className={cx("mt-3 line-clamp-3 max-w-[46ch]", ink ? "text-fog" : "text-muted")}>
-        {project.summary}
+      <p className={cx("mt-3 max-w-[46ch]", ink ? "text-fog" : "text-muted")}>
+        {project.cardSummary}
       </p>
 
       {featured && (

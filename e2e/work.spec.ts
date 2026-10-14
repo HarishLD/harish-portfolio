@@ -60,13 +60,14 @@ test.describe("work", () => {
     expect((await axe(page)).violations).toEqual([]);
   });
 
-  // notFound() inside a streamed (PPR) render keeps the 200 status but serves the
-  // 404 UI with robots noindex: a documented soft 404 in Next 16.
-  test("unknown case studies render the 404 page, not indexed", async ({ page, request }) => {
-    await page.goto("/work/not-a-project");
+  test("unknown case studies return a real 404", async ({ page }) => {
+    const res = await page.goto("/work/not-a-project");
+    expect(res?.status()).toBe(404);
     await expect(page.getByText("This page could not be found.")).toBeVisible();
-    const html = await (await request.get("/work/not-a-project")).text();
-    expect(html).toContain('<meta name="robots" content="noindex"/>');
+  });
+
+  test("known case studies still return 200", async ({ request }) => {
+    expect((await request.get("/work/notes-app")).status()).toBe(200);
   });
 
   test.describe("without JavaScript", () => {
