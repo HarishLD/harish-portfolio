@@ -12,6 +12,14 @@ updates:
       runtime:
         dependency-type: production
         update-types: [patch]
+    ignore:
+      # Types must match the Node line we run (.nvmrc: 22), not the newest Node.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # TypeScript 7 (native compiler) breaks typescript-eslint via eslint-config-next.
+      # Revisit when typescript-eslint supports it (see CLAUDE.md Housekeeping).
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:

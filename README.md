@@ -86,8 +86,8 @@ e2e/              Playwright specs
 ## Milestones
 
 - [x] M0 Setup: tooling, CI, deploy pipeline
-- [ ] M1 Foundations: tokens, primitives, content layer, navigation, motion provider (in review)
-- [ ] M2 Hero: Name Wall, morphing device, signal
+- [x] M1 Foundations: tokens, primitives, content layer, navigation, motion provider
+- [x] M2 Hero: Name Wall, morphing device, signal
 - [ ] M3 Work: bento grid, filters, case studies
 - [ ] M4 Layers, Path, How I Work
 - [ ] M5 Contact, resume, SEO (indexing switched on here)
