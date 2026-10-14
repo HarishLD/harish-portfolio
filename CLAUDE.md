@@ -17,7 +17,7 @@ Source of truth for all claims: `docs/resume-facts.md` (from the resume). Never 
 
 - [x] M0 Setup (Next.js 16, React 19, TS strict, Tailwind v4 tokens, self-hosted fonts, Vitest, Playwright + axe, Lighthouse CI, GitHub Actions)
 - [x] M1 Foundations: primitives, typed content layer + zod schema, nav (top bar → floating dock on desktop, full-screen menu on mobile), motion provider with reduced-motion
-- [ ] M2 Hero: Name Wall static first (fast LCP), then fake-3D morph device + signal line on scroll
+- [x] M2 Hero: Name Wall static first (fast LCP), then fake-3D morph device + signal line on scroll
 - [ ] M3 Work: bento grid, layer filters, recreated screens, case studies (`/work/[slug]` pages + overlay)
 - [ ] M4 Layers (pinned desktop, swipe mobile), Path timeline, How I Work
 - [ ] M5 Contact, resume download, SEO (metadata, OG, JSON-LD, sitemap), switch robots to index
@@ -26,6 +26,8 @@ Source of truth for all claims: `docs/resume-facts.md` (from the resume). Never 
 ## Housekeeping
 
 - ESLint 10: `package.json` `overrides` force the eslint peer for `eslint-plugin-import`, `eslint-plugin-jsx-a11y` and `eslint-plugin-react` (via `eslint-config-next`). Remove those overrides once the plugins declare ESLint 10 support (check with `npm view <plugin> peerDependencies`).
+- TypeScript stays on 5.x: TS 7 (native compiler) breaks typescript-eslint inside `eslint-config-next`. Dependabot ignores TS majors; lift that once typescript-eslint supports TS 7.
+- `@types/node` follows the Node line in `.nvmrc` (22); Dependabot ignores its majors.
 - `npm audit` shows a dev-only `braces` advisory (GHSA-vfj7-8cjw-p6xm) with no upstream fix; CI audits production deps only.
 
 ## Positioning
