@@ -93,7 +93,7 @@ e2e/              Playwright specs
 - [x] M0 Setup: tooling, CI, deploy pipeline
 - [x] M1 Foundations: tokens, primitives, content layer, navigation, motion provider
 - [x] M2 Hero: Name Wall, morphing device, signal
-- [ ] M3 Work: bento grid, filters, case studies
+- [x] M3 Work: bento grid, filters, case studies
 - [ ] M4 Layers, Path, How I Work
 - [ ] M5 Contact, resume, SEO (indexing switched on here)
 - [ ] M6 QA and polish
