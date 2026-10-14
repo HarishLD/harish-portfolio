@@ -64,6 +64,8 @@ If a secret is ever needed (contact form, analytics key), it goes in Vercel's En
 ```
 src/
   app/            routes, root layout, fonts, global tokens
+    work/[slug]/          full case study pages (static)
+    @modal/(.)work/[slug]/ the same case study as an overlay over the home page
   lib/            framework-free helpers (site config, cx)
   fonts/          vendored woff2 + licenses
   components/
@@ -72,6 +74,9 @@ src/
     nav/          desktop bar → dock (GSAP Flip), mobile full-screen <dialog> menu
     hero/         Name Wall, fake-3D device, scroll morph island
     signal/       signal thread segments + draw-in island
+    work/         bento grid, layer filters (island), cards
+    case-study/   case study body + overlay shell
+    screens/      recreated client screens (HTML/CSS, labelled, sample data)
   content/        typed resume-backed content, validated with zod at build time
 e2e/              Playwright specs
 .github/          CI workflow, Dependabot

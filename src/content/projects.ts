@@ -12,14 +12,35 @@ export const projects: Project[] = [
     layers: ["mobile", "web", "backend"],
     stack: ["React Native", "React.js", "Node.js", "SQL", "Salesforce CRM"],
     metrics: [
-      { value: "100K+", label: "downloads", scope: "platform" },
-      { value: "5K", label: "daily active users", scope: "platform" },
-      { value: "250+", label: "franchise locations", scope: "platform" },
-      { value: "50K+", label: "weekday bookings through the module I built", scope: "own" },
-      { value: "70K+", label: "weekend bookings through the module I built", scope: "own" },
-      { value: "~2,000", label: "concurrent users at peak on booking", scope: "own" },
-      { value: "<100", label: "CRM sync failures per day", scope: "own" },
-      { value: "<0.1%", label: "crash rate after launch", scope: "platform" },
+      { value: "100K+", label: "downloads", short: "downloads", scope: "platform" },
+      { value: "5K", label: "daily active users", short: "DAU", scope: "platform" },
+      { value: "250+", label: "franchise locations", short: "locations", scope: "platform" },
+      {
+        value: "50K+",
+        label: "weekday bookings through the module I built",
+        short: "weekday bookings",
+        scope: "own",
+        featured: true,
+      },
+      {
+        value: "70K+",
+        label: "weekend bookings through the module I built",
+        short: "weekend bookings",
+        scope: "own",
+      },
+      {
+        value: "~2,000",
+        label: "concurrent users at peak on booking",
+        short: "peak concurrent users",
+        scope: "own",
+      },
+      {
+        value: "<100",
+        label: "CRM sync failures per day",
+        short: "sync failures/day",
+        scope: "own",
+      },
+      { value: "<0.1%", label: "crash rate after launch", short: "crash rate", scope: "platform" },
     ],
     highlights: [
       "Progressed from Phase 1 contributor to Phase 2 L2 Technical Lead for the entire platform.",
@@ -41,9 +62,15 @@ export const projects: Project[] = [
     layers: ["mobile", "web"],
     stack: ["React Native", "React.js", "REST APIs", "Stripe", "HIPAA"],
     metrics: [
-      { value: "400+", label: "screens", scope: "platform" },
-      { value: "4.2s → 1.8s", label: "load time", scope: "own" },
-      { value: "<0.1%", label: "crash incidents", scope: "platform" },
+      { value: "400+", label: "screens", short: "screens", scope: "platform" },
+      {
+        value: "4.2s → 1.8s",
+        label: "load time",
+        short: "load time",
+        scope: "own",
+        featured: true,
+      },
+      { value: "<0.1%", label: "crash incidents", short: "crash incidents", scope: "platform" },
     ],
     highlights: [
       "RBAC for patients, caregivers and providers, with JWT, encryption at rest, TLS in transit and audit logging.",
@@ -63,7 +90,15 @@ export const projects: Project[] = [
     layers: ["web"],
     stack: ["React.js", "REST APIs"],
     delivery: "2 weeks",
-    metrics: [{ value: "1,000+", label: "name suggestions in real time", scope: "own" }],
+    metrics: [
+      {
+        value: "1,000+",
+        label: "name suggestions in real time",
+        short: "live suggestions",
+        scope: "own",
+        featured: true,
+      },
+    ],
     highlights: [
       "Built end to end: product classification with string tokenization and whitespace pattern segmentation.",
       "UI, reusable component architecture, state management and REST integration.",
@@ -81,14 +116,21 @@ export const projects: Project[] = [
     layers: ["web", "backend"],
     stack: ["Next.js", "React", "TypeScript", "PostgreSQL", "Prisma"],
     metrics: [
-      { value: "113", label: "unit and integration tests", scope: "own" },
-      { value: "100", label: "Lighthouse accessibility", scope: "own" },
+      {
+        value: "113",
+        label: "unit and integration tests",
+        short: "tests",
+        scope: "own",
+        featured: true,
+      },
+      { value: "100", label: "Lighthouse accessibility", short: "Lighthouse a11y", scope: "own" },
     ],
     highlights: [
       "Next.js App Router with strict TypeScript.",
       "TDD with Vitest; trade-offs documented in DECISIONS.md.",
     ],
-    screens: "real",
+    // Live app is behind a login; recreated until a real screenshot is provided.
+    screens: "recreated",
     links: {
       live: "https://notes-app-v19s-three.vercel.app",
       source: "https://github.com/HarishLD/notes_app",
@@ -105,8 +147,8 @@ export const projects: Project[] = [
     stack: ["React.js", "HTML/CSS templating"],
     delivery: "4 days",
     metrics: [
-      { value: "5", label: "step form workflow", scope: "own" },
-      { value: "6", label: "page dynamic PDF", scope: "own" },
+      { value: "5", label: "step form workflow", short: "form steps", scope: "own" },
+      { value: "6", label: "page dynamic PDF", short: "PDF pages", scope: "own", featured: true },
     ],
     highlights: ["Reusable form components and a templated HTML/CSS rendering layer."],
     screens: "recreated",

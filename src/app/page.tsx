@@ -1,10 +1,8 @@
 import { Hero } from "@/components/hero";
-import { MetricLines } from "@/components/metric-lines";
 import { SignalThread } from "@/components/signal";
-import { ButtonLink, Card, Display, Label, Section, SignalDot } from "@/components/ui";
-import { experience, profile, projects, skills } from "@/content";
-
-const layerLabel = { mobile: "Mobile", web: "Web", backend: "Backend" } as const;
+import { WorkSection } from "@/components/work";
+import { ButtonLink, Display, Label, Section, SignalDot } from "@/components/ui";
+import { experience, profile, skills } from "@/content";
 
 function formatMonth(ym: string) {
   const [year, month] = ym.split("-").map(Number);
@@ -16,8 +14,8 @@ function formatMonth(ym: string) {
 }
 
 /**
- * Home. The hero is final (M2); the other sections are the M1 scaffold, replaced
- * by their designed versions in M3 (work), M4 (layers, path, how I work), M5 (contact).
+ * Home. Hero (M2) and Work (M3) are final; the rest is the M1 scaffold, replaced
+ * by the designed versions in M4 (layers, path, how I work) and M5 (contact).
  */
 export default function Home() {
   return (
@@ -25,27 +23,7 @@ export default function Home() {
       <Hero profile={profile} />
       <SignalThread />
 
-      <Section id="work" signal="through" aria-labelledby="work-title">
-        <Label className="text-muted">Selected work</Label>
-        <Display id="work-title" className="mt-4">
-          Work
-        </Display>
-        <ul className="mt-12 grid gap-4 md:grid-cols-2">
-          {projects.map((p) => (
-            <li key={p.slug}>
-              <Card className="flex h-full flex-col gap-4">
-                <Label className="text-muted">
-                  {p.layers.map((l) => layerLabel[l]).join(" · ")}
-                  {p.delivery && ` · ${p.delivery}`}
-                </Label>
-                <h3 className="font-display text-3xl uppercase">{p.name}</h3>
-                <p>{p.summary}</p>
-                <MetricLines metrics={p.metrics} />
-              </Card>
-            </li>
-          ))}
-        </ul>
-      </Section>
+      <WorkSection />
 
       <Section id="layers" tone="ink" signal="through" aria-labelledby="layers-title">
         <Label className="text-fog">Mobile · Web · Backend</Label>

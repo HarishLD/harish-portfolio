@@ -35,7 +35,8 @@ for (const file of htmlFiles(APP_DIR)) {
     relative(APP_DIR, file)
       .replace(/(^|\/)?index\.html$/, "")
       .replace(/\.html$/, "");
-  if (route.startsWith("/_global-error")) continue;
+  // Skip Next's own error page and the empty fallback shells for dynamic params ("/work/[slug]").
+  if (route.startsWith("/_global-error") || route.includes("[")) continue;
   const chunks = chunksOf(readFileSync(file, "utf8"));
   const ownKb = kb(chunks.filter((c) => !framework.has(c)).reduce((sum, c) => sum + gz(c), 0));
   const totalKb = kb(chunks.reduce((sum, c) => sum + gz(c), 0));

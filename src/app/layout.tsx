@@ -27,7 +27,7 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children, modal }: LayoutProps<"/">) {
   return (
     <html lang="en" id="top" className={fontVariables}>
       <body>
@@ -42,6 +42,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <main id="main" tabIndex={-1} className="pt-16 outline-none lg:pt-20">
             {children}
           </main>
+          {modal}
         </MotionProvider>
       </body>
     </html>
