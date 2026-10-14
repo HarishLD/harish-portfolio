@@ -9,7 +9,15 @@ import {
   useState,
 } from "react";
 import type { Layer } from "@/content";
-import { type Flip, type Gsap, loadFlip, loadGsap, useMotion } from "@/components/motion";
+import {
+  type Flip,
+  type Gsap,
+  afterLoad,
+  loadFlip,
+  loadGsap,
+  useMotion,
+  useMountedSignal,
+} from "@/components/motion";
 import { cx } from "@/lib/cx";
 import { FILTERS, type Filter, layerLabel, matches } from "./layers";
 
@@ -29,10 +37,12 @@ export function WorkGrid({ items, children }: { items: Item[]; children: ReactNo
   const cards = Children.toArray(children);
   const count = items.filter((i) => matches(i.layers, filter)).length;
 
+  const mounted = useMountedSignal();
+
   // Flip is only needed once someone reaches for the filters.
   function preload() {
-    if (lib.current || motion.reduced) return;
-    void Promise.all([loadGsap(), loadFlip()]).then(([gsap, flip]) => {
+    if (lib.current || motion.reduced || !mounted.current) return;
+    afterLoad(Promise.all([loadGsap(), loadFlip()]), mounted.current.signal, ([gsap, flip]) => {
       lib.current = { gsap, flip };
     });
   }

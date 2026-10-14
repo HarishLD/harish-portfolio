@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { type ReactNode, useLayoutEffect, useRef } from "react";
-import { loadGsap, useMotion } from "@/components/motion";
+import { afterLoad, loadGsap, useMotion } from "@/components/motion";
 import { buttonClasses } from "@/components/ui";
 
 /**
@@ -25,9 +25,9 @@ export function CaseStudyOverlay({ children, titleId }: { children: ReactNode; t
     if (!dialog) return;
     if (!dialog.open) dialog.showModal();
     dialog.scrollTop = 0;
-    let cancelled = false;
-    void loadGsap().then((gsap) => {
-      if (cancelled || !panelRef.current) return;
+    const controller = new AbortController();
+    afterLoad(loadGsap(), controller.signal, (gsap) => {
+      if (!panelRef.current) return;
       gsap.fromTo(panelRef.current, motion.reduced ? { opacity: 0 } : { opacity: 0, y: 48 }, {
         opacity: 1,
         y: 0,
@@ -36,7 +36,7 @@ export function CaseStudyOverlay({ children, titleId }: { children: ReactNode; t
       });
     });
     return () => {
-      cancelled = true;
+      controller.abort();
       if (dialog.open) dialog.close();
     };
   }, [children, motion]);

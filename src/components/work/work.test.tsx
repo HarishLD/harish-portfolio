@@ -1,6 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+import { flipMock, loaderMocks } from "@/test/gsap-mock";
 import { projects } from "@/content";
 import { matches } from "./layers";
 import { WorkSection } from ".";
@@ -14,6 +15,19 @@ describe("layer filter", () => {
 });
 
 describe("WorkSection", () => {
+  it("preloads Flip when the filters are reached, then animates the re-layout", async () => {
+    const user = userEvent.setup();
+    render(<WorkSection />);
+    const group = screen.getByRole("group", { name: "Filter projects by layer" });
+    await user.hover(group);
+    expect(loaderMocks.loadFlip).toHaveBeenCalled();
+    await Promise.resolve();
+
+    await user.click(within(group).getByRole("button", { name: /^Mobile/ }));
+    expect(flipMock.getState).toHaveBeenCalledOnce();
+    expect(flipMock.from).toHaveBeenCalledOnce();
+  });
+
   it("renders every project as a link to its case study, in featured order", () => {
     render(<WorkSection />);
     const links = screen.getAllByRole("link", { name: /case study/i });

@@ -28,6 +28,8 @@ Source of truth for all claims: `docs/resume-facts.md` (from the resume). Never 
 - ESLint 10: `package.json` `overrides` force the eslint peer for `eslint-plugin-import`, `eslint-plugin-jsx-a11y` and `eslint-plugin-react` (via `eslint-config-next`). Remove those overrides once the plugins declare ESLint 10 support (check with `npm view <plugin> peerDependencies`).
 - TypeScript stays on 5.x: TS 7 (native compiler) breaks typescript-eslint inside `eslint-config-next`. Dependabot ignores TS majors; lift that once typescript-eslint supports TS 7.
 - `@types/node` follows the Node line in `.nvmrc` (22); Dependabot ignores its majors.
+- CI runners are pinned to `ubuntu-24.04` (ubuntu-latest moves to 26.04 on 2026-10-19). Move deliberately once Playwright and Lighthouse are verified there.
+- Unit tests never load real GSAP: `vitest.setup.ts` mocks the loaders with `src/test/gsap-mock.ts` and makes any real `gsap` import throw. Consume loaders only through `afterLoad` (cancel-safe) or `useLazyGsap`.
 - `npm audit` shows a dev-only `braces` advisory (GHSA-vfj7-8cjw-p6xm) with no upstream fix; CI audits production deps only.
 
 ## Positioning
