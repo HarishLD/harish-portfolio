@@ -1,6 +1,23 @@
 # harish-portfolio
 
-Personal portfolio of Harish Doraiswamy, software engineer across mobile, web and backend.
+Personal portfolio of **Harish Doraiswamy**, software engineer across mobile, web and backend (React Native, React, TypeScript, Node.js, SQL).
+
+**Live:** https://harish-portfolio-harishlds-projects.vercel.app
+
+![Hero: the Name Wall, with the avatar in front of HARISH and a phone playing a recreated booking demo](docs/screenshots/hero.png)
+
+## What's on the site
+
+- **Name Wall hero**: name, role and CTAs readable with zero JS; the phone loops a CSS-only booking demo built from recreated UI.
+- **Work**: a bento grid with layer filters (Mobile / Web / Backend). Every metric says whether it is platform reach or my own work; client products use generic names and recreated screens. Case studies open as an overlay or as their own page.
+- **Layers**: a pinned section where one device turns from phone to browser to server rack while the chapters change beside it (swipe cards on phones, static steps under reduced motion).
+- **Path, How I Work, Contact**: timeline, practices, and a contact section where the signal line lands in the CTA.
+
+| Work                                    | Layers                                                  | Case study                                              | Mobile                                      |
+| --------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------- |
+| ![Work grid](docs/screenshots/work.png) | ![Layers, Backend chapter](docs/screenshots/layers.png) | ![Pet Care case study](docs/screenshots/case-study.png) | ![Mobile hero](docs/screenshots/mobile.png) |
+
+Quality bar, enforced in CI: Lighthouse on every page (desktop and mobile), axe on every page and the case-study overlay, a keyboard-only walkthrough, a 50 KB budget for our own initial JS, and content checks against the resume (`docs/content-audit.md`).
 
 Built with Next.js (App Router), React and TypeScript. Statically generated, deployed on Vercel.
 
@@ -24,7 +41,7 @@ Deliberately not used: a second animation library (Motion), smooth-scroll hijack
 Requires Node 22.12+ (see `.nvmrc`).
 
 ```bash
-git clone https://github.com/<you>/harish-portfolio.git
+git clone https://github.com/HarishLD/harish-portfolio.git
 cd harish-portfolio
 npm ci
 cp .env.example .env.local   # optional locally; defaults to http://localhost:3000
@@ -99,7 +116,7 @@ e2e/              Playwright specs
 - [x] M3 Work: bento grid, filters, case studies
 - [x] M4 Layers, Path, How I Work
 - [x] M5 Contact, resume, SEO (indexing switched on here)
-- [ ] M6 QA and polish
+- [x] M6 QA and polish: Lighthouse every page, axe and keyboard, 404, favicons, content audit
 
 ## License
 

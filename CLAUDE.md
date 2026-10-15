@@ -21,7 +21,7 @@ Source of truth for all claims: `docs/resume-facts.md` (from the resume). Never 
 - [x] M3 Work: bento grid, layer filters, recreated screens, case studies (`/work/[slug]` pages + overlay)
 - [x] M4 Layers device morph (pinned desktop, swipe mobile, see "M4 plan"), hero device back to a static phone, Path timeline, How I Work
 - [x] M5 Contact, resume download, SEO (metadata, OG, JSON-LD, sitemap), switch robots to index
-- [ ] M6 QA and polish
+- [x] M6 QA and polish
 
 ## Housekeeping
 
