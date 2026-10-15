@@ -2,7 +2,7 @@
 
 Personal portfolio of **Harish Doraiswamy**, software engineer across mobile, web and backend (React Native, React, TypeScript, Node.js, SQL).
 
-**Live:** https://harish-portfolio-harishlds-projects.vercel.app
+**Live:** https://harishdoraiswamy.vercel.app
 
 ![Hero: the Name Wall, with the avatar in front of HARISH and a phone playing a recreated booking demo](docs/screenshots/hero.png)
 
