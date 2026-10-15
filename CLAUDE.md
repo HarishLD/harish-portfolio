@@ -1,8 +1,9 @@
 @AGENTS.md
+@Summary.md
 
 # Harish portfolio: project brief
 
-Personal portfolio for Harish Doraiswamy. Read this file fully before any change.
+Personal portfolio for Harish Doraiswamy. Read this file fully before any change. `Summary.md` (imported above) has the current state, code map, decisions and gotchas.
 Source of truth for all claims: `docs/resume-facts.md` (from the resume). Never invent metrics, roles or features.
 
 ## Working agreement
