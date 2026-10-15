@@ -18,7 +18,7 @@ Source of truth for all claims: `docs/resume-facts.md` (from the resume). Never 
 - [x] M0 Setup (Next.js 16, React 19, TS strict, Tailwind v4 tokens, self-hosted fonts, Vitest, Playwright + axe, Lighthouse CI, GitHub Actions)
 - [x] M1 Foundations: primitives, typed content layer + zod schema, nav (top bar → floating dock on desktop, full-screen menu on mobile), motion provider with reduced-motion
 - [x] M2 Hero: Name Wall static first (fast LCP), then fake-3D morph device + signal line on scroll (the morph moves to Layers in M4, see "M4 plan")
-- [ ] M3 Work: bento grid, layer filters, recreated screens, case studies (`/work/[slug]` pages + overlay)
+- [x] M3 Work: bento grid, layer filters, recreated screens, case studies (`/work/[slug]` pages + overlay)
 - [ ] M4 Layers device morph (pinned desktop, swipe mobile, see "M4 plan"), hero device back to a static phone, Path timeline, How I Work
 - [ ] M5 Contact, resume download, SEO (metadata, OG, JSON-LD, sitemap), switch robots to index
 - [ ] M6 QA and polish
@@ -43,7 +43,7 @@ Name: "Signal". Ink & Signal restraint + cinematic hero. Must not feel like a fi
 
 - Hero "Name Wall": oversized HARISH (Anton), avatar standing in front of the letters, fake-3D device beside it, serif line "builds across every layer.", CTAs "See the work" (primary) + "Download resume". Name, role, CTA readable instantly.
 - Morph: lives in the Layers section (from M4), not the hero. Device goes phone → browser → server rack across three pinned chapters. Fake 3D with CSS/SVG transforms first; true 3D only if this lacks impact (desktop only).
-- Hero device: a static tilted phone beside the avatar on desktop (no scroll morph, no chips); hidden below md.
+- Hero device: the recreated Pet Care booking phone beside the avatar, playing a CSS-only booking loop (~7s); desktop adds a cursor tilt (max 6deg, loaded after idle) and an idle float; it links to the Pet Care case study; reduced motion shows the confirmed still frame; hidden below md.
 - Signal: the lime line/dot that threads sections and ends as the contact CTA.
 - Nav: desktop top bar morphs into floating bottom dock (avatar head + links + "Let's talk"). Mobile: menu button → full-screen menu with huge Anton links.
 - Projects: interactive bento, filters All/Mobile/Web/Backend, recreated screens, real metrics, expandable case studies.
@@ -64,6 +64,11 @@ Why: the hero morph finished within ~280px of scroll, too fast to notice. It mov
 - Performance: transform/opacity only; load GSAP + ScrollTrigger with the section (`useLazyGsap`, `load: "visible"`); stay within the 50KB own-JS budget.
 - Mobile (below md): no pinning. Three swipeable chapter cards (scroll-snap), each showing its device state and its logos static.
 - Reduced motion: no pin, no rotation, no pop-outs; three static steps with the logos shown in place.
+
+Built in M4 (notes for later work):
+- The pinned layout activates only when the section is approached from above (still below the viewport). After a jump past it (dock link, hash) it stays as static steps until the next approach, so a pin spacer never appears above the reader.
+- React Native has no simple-icons mark; it uses the React atom (its actual logo) labelled "React Native". Salesforce and WebSockets are text labels.
+- Breakpoint: pinned at lg (1024px) and up; swipe cards below lg (tablets included).
 
 ## Tokens (in `src/app/globals.css`)
 

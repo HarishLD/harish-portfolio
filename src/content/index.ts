@@ -1,9 +1,16 @@
 import { z } from "zod";
-import { experience as rawExperience } from "./experience";
+import {
+  education as rawEducation,
+  experience as rawExperience,
+  learning as rawLearning,
+} from "./experience";
+import { layerChapters as rawLayerChapters } from "./layers";
 import { profile as rawProfile, skills as rawSkills } from "./profile";
 import { projects as rawProjects } from "./projects";
 import {
   type NavItem,
+  educationSchema,
+  layerChapterSchema,
   navItemSchema,
   profileSchema,
   projectSchema,
@@ -46,8 +53,29 @@ export const experience = z
   )
   .parse(rawExperience);
 
+export const layerChapters = z
+  .array(layerChapterSchema)
+  .length(3)
+  .refine(
+    (c) => c.map((x) => x.id).join() === "mobile,web,backend",
+    "Chapters must be Mobile, Web, Backend",
+  )
+  .parse(rawLayerChapters);
+export const education = educationSchema.parse(rawEducation);
+export const learning = z.array(z.string().min(1)).parse(rawLearning);
+
 export function getProject(slug: string) {
   return projects.find((p) => p.slug === slug);
 }
 
-export type { Layer, Metric, NavItem, Profile, Project, Role, SkillGroup } from "./schema";
+export type {
+  Education,
+  Layer,
+  LayerChapter,
+  Metric,
+  NavItem,
+  Profile,
+  Project,
+  Role,
+  SkillGroup,
+} from "./schema";

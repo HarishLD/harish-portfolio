@@ -1,4 +1,4 @@
-import type { Role } from "./schema";
+import type { Education, Role } from "./schema";
 
 /** Newest first. AVASOFT and zeb are entities of the same group. */
 export const experience: Role[] = [
@@ -29,4 +29,18 @@ export const experience: Role[] = [
       "React Native and React.js screens and reusable components from requirements and designs, under code-review practices.",
     projects: [],
   },
+];
+
+export const education: Education = {
+  degree: "B.E. Computer Science and Engineering",
+  school: "Rajalakshmi Institute of Technology",
+  start: "2020-05",
+  end: "2024-06",
+  grade: "CGPA 8.0",
+};
+
+/** Certifications and teaching, as listed on the resume. */
+export const learning: string[] = [
+  "Full Stack Developer and AR/VR Engineer certifications (Naan Mudhalvan)",
+  "Ran a 5-day Android and Web Development workshop for 300+ students",
 ];

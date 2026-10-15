@@ -10,7 +10,6 @@ test.describe("hero", () => {
       await expect(page.getByText("Software Engineer", { exact: true }).first()).toBeVisible();
       await expect(page.getByRole("link", { name: "See the work" })).toBeVisible();
       await expect(page.getByAltText(/avatar of harish/i)).toBeVisible();
-      await expect(page.locator("[data-device-stage]")).toHaveAttribute("data-state", "mobile");
     });
   });
 
@@ -29,7 +28,7 @@ test.describe("hero", () => {
       range.setEnd(text, 4);
       const letterI = R(range);
       const avatar = R(document.querySelector('img[alt^="Illustrated"]')!);
-      const deviceEl = document.querySelector("[data-device-stage]")!.parentElement!;
+      const deviceEl = document.querySelector("[data-hero-phone]")!;
       const device = R(deviceEl);
       const hero = R(document.querySelector("[data-hero]")!);
       return {
@@ -61,13 +60,10 @@ test.describe("hero", () => {
     }
   });
 
-  test("phones hide the device, and the chips in full motion", async ({ page, viewport }) => {
+  test("phones hide the hero device", async ({ page, viewport }) => {
     test.skip((viewport?.width ?? 0) >= 768, "phones only");
     await page.goto("/");
-    await expect(page.locator("[data-device-stage]")).toBeHidden();
-    await expect(page.getByText("Backend", { exact: true })).toHaveCount(2);
-    await expect(page.getByText("Backend", { exact: true }).first()).toBeHidden();
-    await expect(page.getByText("Backend", { exact: true }).last()).toBeHidden();
+    await expect(page.locator("[data-hero-phone]")).toBeHidden();
   });
 
   test("the avatar is preloaded for LCP", async ({ page }) => {
@@ -75,18 +71,55 @@ test.describe("hero", () => {
     await expect(page.locator('link[rel="preload"][as="image"]')).toHaveCount(1);
   });
 
-  test("scrolling morphs the device phone → browser → server", async ({ page }) => {
+  test("the phone loops the booking demo and links to the case study", async ({
+    page,
+    viewport,
+  }) => {
+    test.skip((viewport?.width ?? 0) < 768, "phone is hidden below md");
     await page.goto("/");
-    const stage = page.locator("[data-device-stage]");
-    await expect(stage).toHaveAttribute("data-state", "mobile");
-    // Wait for the idle-loaded ScrollTrigger before scrolling.
-    await page.waitForFunction(() =>
-      document.querySelector("[data-face=mobile]")?.getAttribute("style"),
+    const phone = page.getByRole("link", {
+      name: "Pet Care Platform booking demo, open case study",
+    });
+    await expect(phone).toBeVisible();
+    const tick = page.locator("[data-hero-phone] [data-demo-tick]");
+    await expect(tick).toHaveCSS("animation-name", "demo-tick");
+    // The tick shows up within one cycle (~7s).
+    await expect
+      .poll(async () => Number(await tick.evaluate((el) => getComputedStyle(el).opacity)), {
+        timeout: 9000,
+      })
+      .toBeGreaterThan(0.9);
+    await phone.click();
+    await expect(page).toHaveURL(/\/work\/pet-care-platform$/);
+  });
+
+  test("the loop pauses when the hero is off screen", async ({ page, viewport }) => {
+    test.skip((viewport?.width ?? 0) < 768, "phone is hidden below md");
+    await page.goto("/");
+    await page.waitForTimeout(600); // the observer starts after idle
+    await page.evaluate(() =>
+      window.scrollTo(
+        0,
+        document.querySelector("#work")!.getBoundingClientRect().top + scrollY + 400,
+      ),
     );
-    await page.mouse.wheel(0, 900);
-    await expect(stage).toHaveAttribute("data-state", "backend");
-    await page.mouse.wheel(0, -2000);
-    await expect(stage).toHaveAttribute("data-state", "mobile");
+    await expect(page.locator("[data-hero]")).toHaveAttribute("data-paused", "");
+    await expect(page.locator("[data-hero-phone] [data-demo-tick]")).toHaveCSS(
+      "animation-play-state",
+      "paused",
+    );
+  });
+
+  test.describe("reduced motion", () => {
+    test.use({ reducedMotion: "reduce" });
+
+    test("no loop: the confirmed state as a still frame", async ({ page, viewport }) => {
+      test.skip((viewport?.width ?? 0) < 768, "phone is hidden below md");
+      await page.goto("/");
+      const tick = page.locator("[data-hero-phone] [data-demo-tick]");
+      await expect(tick).toHaveCSS("animation-name", "none");
+      await expect(tick).toHaveCSS("opacity", "1");
+    });
   });
 
   test("keeps layout stable while loading (CLS < 0.05)", async ({ page }) => {
@@ -106,33 +139,5 @@ test.describe("hero", () => {
         }),
     );
     expect(cls).toBeLessThan(0.05);
-  });
-
-  test.describe("reduced motion", () => {
-    test.use({ reducedMotion: "reduce" });
-
-    test("the three states are tappable and scrolling does not morph", async ({
-      page,
-      viewport,
-    }) => {
-      await page.goto("/");
-      if ((viewport?.width ?? 0) < 1280) {
-        // On phones the chips sit below the hero rule, never over the avatar.
-        const chips = await page.getByRole("group", { name: "Device layer" }).boundingBox();
-        const avatar = await page.getByAltText(/avatar of harish/i).boundingBox();
-        expect(chips!.y).toBeGreaterThanOrEqual(avatar!.y + avatar!.height);
-      }
-
-      const stage = page.locator("[data-device-stage]");
-      const group = page.getByRole("group", { name: "Device layer" });
-      await group.getByRole("button", { name: "Web" }).click();
-      await expect(stage).toHaveAttribute("data-state", "web");
-      await group.getByRole("button", { name: "Backend" }).click();
-      await expect(stage).toHaveAttribute("data-state", "backend");
-
-      await page.mouse.wheel(0, 600);
-      await page.waitForTimeout(400);
-      await expect(stage).toHaveAttribute("data-state", "backend");
-    });
   });
 });

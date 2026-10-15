@@ -10,11 +10,14 @@ import { cx } from "@/lib/cx";
  * Screens are abstract UI, not client product screens.
  *
  * `data-state` on the stage picks the visible face with plain CSS, so it works
- * with no JS and under reduced motion; HeroMorph scrubs the faces with GSAP.
+ * with no JS and under reduced motion. The hero shows the phone; the Layers
+ * section drives the morph with GSAP (`threeD` keeps the tilt at every size).
  */
 
+// Body and hard-shadow colours are variables so the device reads on ink too
+// (Layers sets --device-body / --device-shadow); defaults are for paper.
 const body =
-  "absolute rounded-device bg-ink p-[var(--bezel)] shadow-[14px_16px_0_var(--color-line)]";
+  "absolute rounded-(--r) bg-(--device-body,var(--color-ink)) p-[var(--bezel)] shadow-[min(14px,4cqw)_min(16px,4.6cqw)_0_var(--device-shadow,var(--color-line))]";
 const face =
   "motion-fade opacity-0 transition-opacity duration-(--duration-ui) xl:will-change-transform";
 
@@ -32,7 +35,7 @@ function PhoneFace() {
         "inset-y-[3%] left-[27%] w-[46%] group-data-[state=mobile]/stage:opacity-100",
       )}
     >
-      <div className="flex h-full flex-col gap-[6%] overflow-hidden rounded-[calc(var(--radius-device)-var(--bezel))] bg-ink-2 p-[9%]">
+      <div className="flex h-full flex-col gap-[6%] overflow-hidden rounded-[calc(var(--r)-var(--bezel))] bg-ink-2 p-[9%]">
         <div className="mx-auto h-[3%] w-[34%] rounded-pill bg-ink" />
         <Bar className="h-[4%] w-[55%] bg-fog/70" />
         {[0, 1, 2].map((i) => (
@@ -109,7 +112,7 @@ function ServerFace() {
         <div
           key={i}
           data-server-unit=""
-          className="relative flex h-[26%] items-center gap-[4%] rounded-[18px] bg-ink px-[7%] shadow-[14px_16px_0_var(--color-line)]"
+          className="relative flex h-[26%] items-center gap-[4%] rounded-[18px] bg-(--device-body,var(--color-ink)) px-[7%] shadow-[min(14px,4cqw)_min(16px,4.6cqw)_0_var(--device-shadow,var(--color-line))]"
         >
           <div className="flex flex-1 flex-col gap-[10%] self-stretch py-[6%]">
             {[0, 1, 2].map((v) => (
@@ -124,21 +127,43 @@ function ServerFace() {
   );
 }
 
-export function Device({ state, className }: { state: Layer; className?: string }) {
+export function Device({
+  state,
+  threeD = false,
+  className,
+}: {
+  state: Layer;
+  /** Tilt and 3D context at every size (Layers). Default: only on xl, flat below. */
+  threeD?: boolean;
+  className?: string;
+}) {
   return (
     <div
       aria-hidden="true"
-      className={cx("relative aspect-square xl:[perspective:1400px]", className)}
+      data-device=""
+      className={cx(
+        "@container relative aspect-square",
+        threeD ? "[perspective:1400px]" : "xl:[perspective:1400px]",
+        className,
+      )}
     >
       {/* One soft shadow on paper, as a gradient (no filters). */}
       <span
         aria-hidden="true"
+        data-device-shadow=""
         className="absolute inset-x-[10%] bottom-[-2%] h-[10%] rounded-[50%] bg-[radial-gradient(closest-side,rgb(11_11_10/0.22),transparent)]"
       />
       <div
         data-device-stage=""
         data-state={state}
-        className="group/stage relative size-full [transform:rotateY(-24deg)_rotateX(8deg)] [--bezel:9px] [transform-style:preserve-3d]"
+        className={cx(
+          // Spec values (34px radius, 9px bezel) at hero size, scaled down with the
+          // device so small phones (Layers cards) don't turn into pills.
+          "group/stage relative size-full [--bezel:min(9px,2.6cqw)] [--r:min(var(--radius-device),10cqw)]",
+          threeD
+            ? "[transform:rotateY(-24deg)_rotateX(8deg)] [transform-style:preserve-3d]"
+            : "xl:[transform:rotateY(-24deg)_rotateX(8deg)] xl:[transform-style:preserve-3d]",
+        )}
       >
         <PhoneFace />
         <BrowserFace />

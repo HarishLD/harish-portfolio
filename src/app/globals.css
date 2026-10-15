@@ -95,3 +95,151 @@
     transition-duration: 150ms !important;
   }
 }
+
+/*
+ * Hero booking demo: a 7s CSS loop over the recreated booking screen
+ * (day → slot → Confirm pressed → lime tick → pause → reset). Opacity and
+ * transform only, no JS. `[data-paused]` on the hero (set by the hero motion
+ * island while it's off screen) pauses it.
+ */
+@layer components {
+  .booking-demo [data-demo-day] {
+    animation: demo-day 7s infinite;
+  }
+  .booking-demo [data-demo-slot],
+  .booking-demo [data-demo-ready] {
+    animation: demo-slot 7s infinite;
+  }
+  .booking-demo [data-demo-idle] {
+    animation: demo-idle 7s infinite;
+  }
+  .booking-demo [data-demo-press] {
+    animation: demo-press 7s infinite;
+  }
+  .booking-demo [data-demo-tick] {
+    animation: demo-tick 7s infinite;
+  }
+  .booking-demo [data-demo-tick] > span:first-child {
+    animation: demo-tick-pop 7s infinite;
+  }
+  [data-paused] .booking-demo *,
+  [data-paused] .hero-float {
+    animation-play-state: paused;
+  }
+
+  /* Desktop only: slow idle float (the cursor tilt is added by JS after idle). */
+  @media (width >= 80rem) and (prefers-reduced-motion: no-preference) {
+    .hero-float {
+      animation: hero-float 6s ease-in-out infinite;
+    }
+  }
+
+  /* Reduced motion: no loop, the confirmed state as a still frame. */
+  @media (prefers-reduced-motion: reduce) {
+    .booking-demo [data-demo-day],
+    .booking-demo [data-demo-slot],
+    .booking-demo [data-demo-ready],
+    .booking-demo [data-demo-tick] {
+      animation: none !important;
+      /* !important: beats the `opacity-0` utilities (a later cascade layer). */
+      opacity: 1 !important;
+    }
+    .booking-demo [data-demo-idle],
+    .booking-demo [data-demo-press],
+    .booking-demo [data-demo-tick] > span:first-child {
+      animation: none !important;
+    }
+  }
+}
+
+@keyframes demo-day {
+  0%,
+  8% {
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+  93%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes demo-slot {
+  0%,
+  22% {
+    opacity: 0;
+  }
+  26%,
+  88% {
+    opacity: 1;
+  }
+  93%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes demo-idle {
+  0%,
+  22% {
+    opacity: 1;
+  }
+  26%,
+  88% {
+    opacity: 0;
+  }
+  93%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes demo-press {
+  0%,
+  40% {
+    transform: scale(1);
+  }
+  43% {
+    transform: scale(0.94);
+  }
+  47%,
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes demo-tick {
+  0%,
+  47% {
+    opacity: 0;
+  }
+  51%,
+  86% {
+    opacity: 1;
+  }
+  91%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes demo-tick-pop {
+  0%,
+  47% {
+    transform: scale(0.6);
+  }
+  53% {
+    transform: scale(1.06);
+  }
+  56%,
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}

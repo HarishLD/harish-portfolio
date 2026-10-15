@@ -11,6 +11,7 @@ const eslintConfig = defineConfig([
       "src/components/{nav,motion,hero,signal}/**/*.{ts,tsx}",
       "src/components/work/work-grid.tsx",
       "src/components/case-study/case-study-overlay.tsx",
+      "src/components/layers/layers-island.tsx",
     ],
     ignores: ["src/components/nav/index.tsx", "**/*.test.tsx"],
     rules: {

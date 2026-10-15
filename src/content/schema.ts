@@ -82,7 +82,7 @@ export const profileSchema = z.object({
   /** Phone-free public PDF. Optional until M5: CTAs render nothing when it is missing. */
   resumeUrl: z.string().startsWith("/").optional(),
   /** Practices for "How I Work" (internal AI tooling lives here, not as a project). */
-  howIWork: z.array(z.string().min(1)).min(1),
+  howIWork: z.array(z.object({ title: z.string().min(1), body: z.string().min(1) })).min(1),
   /** The only place the learning stack may appear. */
   currentlyLearning: z.array(z.string().min(1)),
 });
@@ -93,6 +93,32 @@ export const skillGroupSchema = z.object({
   items: z.array(z.string().min(1)).min(1),
 });
 export type SkillGroup = z.infer<typeof skillGroupSchema>;
+
+export const layerChapterSchema = z.object({
+  id: layerSchema,
+  title: z.string().min(1),
+  body: z.string().min(1),
+  /** One resume-backed proof point per chapter. */
+  proof: z.object({
+    value: z.string().min(1),
+    label: z.string().min(1),
+    scope: z.enum(["platform", "own"]),
+  }),
+  logos: z
+    .array(z.object({ name: z.string().min(1), icon: z.string().min(1).optional() }))
+    .min(1)
+    .max(5),
+});
+export type LayerChapter = z.infer<typeof layerChapterSchema>;
+
+export const educationSchema = z.object({
+  degree: z.string().min(1),
+  school: z.string().min(1),
+  start: z.string().regex(/^\d{4}-\d{2}$/),
+  end: z.string().regex(/^\d{4}-\d{2}$/),
+  grade: z.string().min(1),
+});
+export type Education = z.infer<typeof educationSchema>;
 
 export const navItemSchema = z.object({
   label: z.string().min(1),
