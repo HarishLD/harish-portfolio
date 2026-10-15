@@ -43,9 +43,14 @@ describe("ContactSection", () => {
     );
   });
 
-  it("hides the resume download until public/resume.pdf exists", () => {
-    expect(getResumeHref()).toBeUndefined();
+  it("offers the resume download exactly when public/resume.pdf exists", () => {
     render(<ContactSection />);
-    expect(screen.queryByRole("link", { name: /resume/i })).toBeNull();
+    const link = screen.queryByRole("link", { name: /resume/i });
+    if (getResumeHref()) {
+      expect(link).toHaveAttribute("href", "/resume.pdf");
+      expect(link).toHaveAttribute("download");
+    } else {
+      expect(link).toBeNull();
+    }
   });
 });

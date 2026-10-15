@@ -39,9 +39,22 @@ test.describe("contact", () => {
     await expect(nav).toHaveAttribute("data-dock-hidden", "false");
   });
 
-  test("no resume button until the PDF exists", async ({ page }) => {
+  test("resume downloads from the hero and contact, served as a PDF", async ({
+    page,
+    request,
+    viewport,
+  }) => {
     await page.goto("/");
-    await expect(page.getByRole("link", { name: /resume/i })).toHaveCount(0);
+    const links = page.getByRole("link", { name: /resume/i });
+    await expect(links).toHaveCount(2);
+    for (const link of await links.all()) {
+      await expect(link).toHaveAttribute("href", "/resume.pdf");
+      await expect(link).toHaveAttribute("download", "");
+    }
+    const res = await request.get("/resume.pdf");
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toBe("application/pdf");
+    void viewport;
   });
 });
 

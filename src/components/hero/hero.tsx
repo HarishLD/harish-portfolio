@@ -72,7 +72,7 @@ export function Hero({ profile }: { profile: Profile }) {
         */}
         <HeroPhone className="relative z-20 col-span-full row-start-2 mb-5 w-[min(calc(100%-var(--F)*1.539-var(--Ha)*0.349-0.75rem),calc(var(--Ha)-var(--F)*0.7-1.5rem),9rem)] self-end justify-self-end max-md:hidden xl:col-span-1 xl:col-start-2 xl:row-span-full xl:row-start-1 xl:mt-[calc(var(--F)*-0.06)] xl:mb-0 xl:ml-6 xl:w-[min(345px,calc((100%-1.5rem)*1.15))] xl:self-start xl:justify-self-start" />
 
-        <div className="relative z-30 col-span-full row-start-3 flex flex-col gap-5 pt-8 [--signal-top:0.9rem] xl:col-span-1 xl:col-start-1 xl:row-span-2 xl:row-start-2 xl:max-w-[calc(var(--F)*1.539-var(--Ha)*0.349-1.5rem)] xl:pt-6">
+        <div className="relative z-30 col-span-full row-start-3 flex flex-col gap-5 pt-8 [--signal-top:0.9rem] xl:col-span-1 xl:col-start-1 xl:row-span-2 xl:row-start-2 xl:max-w-[calc(var(--F)*1.539-var(--Ha)*0.349-1.5rem)] xl:pt-6 xl:pb-10">
           <SignalLine tone="paper" variant="start" anchor="content" />
           <p className="text-lg font-medium xl:text-xl">{profile.role}</p>
           <Accent as="p" className="-mt-2 text-[clamp(2.25rem,8vw,2.75rem)] leading-[1.02]">

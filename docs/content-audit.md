@@ -57,6 +57,6 @@ Recreated screens (booking slots, schedule, records, naming list, notes, form) a
 
 ## Open items for Harish
 
-- `public/resume.pdf` (phone-free) still to be added; download buttons stay hidden until then.
+- `public/resume.pdf` added (2026-10-15): text checked, no phone number. Its header lists relocation cities (Bengaluru, Hyderabad); the site itself stays location-neutral.
 - The footer's "Source on GitHub" link points to a private repo; make it public at launch or remove the link.
 - Notes app screen is recreated; a real screenshot can replace it (the content rules allow real screenshots for Notes only).

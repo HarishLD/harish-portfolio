@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { getResumeHref } from "@/lib/resume";
 import Home from "./page";
 
 describe("Home", () => {
@@ -24,8 +25,10 @@ describe("Home metrics", () => {
     ).toBeInTheDocument();
   });
 
-  it("hides the resume CTA until a phone-free PDF exists", () => {
+  it("shows the hero resume CTA exactly when the PDF exists", () => {
     render(<Home />);
-    expect(screen.queryByRole("link", { name: /download resume/i })).toBeNull();
+    const cta = screen.queryByRole("link", { name: /download resume/i });
+    if (getResumeHref()) expect(cta).toHaveAttribute("href", "/resume.pdf");
+    else expect(cta).toBeNull();
   });
 });
