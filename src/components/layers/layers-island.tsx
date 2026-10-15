@@ -257,7 +257,7 @@ export function LayersIsland({ chapters, skipTo }: { chapters: ChapterSlot[]; sk
                     aria-current={active === i ? "step" : undefined}
                     className={cx(
                       "font-mono text-label uppercase transition-colors duration-(--duration-micro)",
-                      active === i ? "text-paper" : "text-fog/60",
+                      active === i ? "text-paper" : "text-fog",
                     )}
                   >
                     {String(i + 1).padStart(2, "0")} {c.title}
@@ -291,7 +291,7 @@ export function LayersIsland({ chapters, skipTo }: { chapters: ChapterSlot[]; sk
             >
               {c.text}
               <div className="flex flex-col items-center gap-8">
-                <Device state={c.id} className="w-[75%] max-w-80 lg:w-[70%]" />
+                <Device state={c.id} only className="w-[75%] max-w-80 lg:w-[70%]" />
                 {c.logos}
               </div>
             </li>

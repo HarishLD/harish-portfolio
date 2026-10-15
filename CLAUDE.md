@@ -20,7 +20,7 @@ Source of truth for all claims: `docs/resume-facts.md` (from the resume). Never 
 - [x] M2 Hero: Name Wall static first (fast LCP), then fake-3D morph device + signal line on scroll (the morph moves to Layers in M4, see "M4 plan")
 - [x] M3 Work: bento grid, layer filters, recreated screens, case studies (`/work/[slug]` pages + overlay)
 - [x] M4 Layers device morph (pinned desktop, swipe mobile, see "M4 plan"), hero device back to a static phone, Path timeline, How I Work
-- [ ] M5 Contact, resume download, SEO (metadata, OG, JSON-LD, sitemap), switch robots to index
+- [x] M5 Contact, resume download, SEO (metadata, OG, JSON-LD, sitemap), switch robots to index
 - [ ] M6 QA and polish
 
 ## Housekeeping
@@ -75,6 +75,13 @@ Built in M4 (notes for later work):
 - Resume: `getResumeHref()` (src/lib/resume.ts) checks `public/resume.pdf` at build; the hero and contact download buttons render only when it exists. The PDF must be the phone-free version.
 - Indexing: `indexable` (src/lib/site.ts) is true only when `VERCEL_ENV=production`; it drives `robots.ts` and the page robots meta. Previews, local and CI builds stay noindex.
 - OG images use next/og with Anton vendored as TTF in `src/assets/og` (Satori can't read WOFF2); asset reads are `"use cache"` so the images prerender. Keep that folder under ~400KB (500KB bundle limit).
+
+## M6 notes
+
+- Lighthouse CI runs every page twice: `lighthouserc.json` (desktop) and `lighthouserc.mobile.json`. `is-crawlable` is off in CI because previews are noindex by design.
+- QA specs: `e2e/a11y.spec.ts` (axe on every page, the overlay, pinned Layers, reduced motion) and `e2e/keyboard.spec.ts` (full Tab walkthrough, overlay focus).
+- Generated assets: `node scripts/icons.mjs` (favicon set from `src/app/icon.svg`), `node scripts/og-screens.mjs` (OG screen snapshots, needs a running build). Re-run after changing the mark or a recreated screen.
+- `docs/content-audit.md` maps every claim to resume-facts.md; update it when content changes.
 
 ## Tokens (in `src/app/globals.css`)
 

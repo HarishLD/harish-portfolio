@@ -10,7 +10,7 @@ export const layerChapters: LayerChapter[] = [
   {
     id: "mobile",
     title: "Mobile",
-    body: "React Native apps with native Kotlin and Swift modules, profiled until they hold 60fps on real devices.",
+    body: "React Native apps with native Kotlin and Swift modules, profiled to sustain 60fps scrolling across mobile, tablet and desktop.",
     proof: {
       value: "4.2s → 1.8s",
       label: "load time I cut on the Healthcare Records apps",
@@ -43,7 +43,7 @@ export const layerChapters: LayerChapter[] = [
   {
     id: "backend",
     title: "Backend",
-    body: "Node.js REST APIs and SQL behind the apps, with real-time CRM sync and WebSocket connections that recover on their own.",
+    body: "Node.js REST APIs and SQL behind the apps, with real-time CRM sync and WebSocket connections that reconnect with exponential backoff.",
     proof: {
       value: "50K+",
       label: "weekday bookings through the Node.js, SQL and Salesforce module I built",

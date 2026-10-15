@@ -17,7 +17,7 @@ export const profile: Profile = {
   howIWork: [
     {
       title: "Tested",
-      body: "Jest and React Testing Library on booking and payment flows; MVVM and Clean Architecture keep logic testable.",
+      body: "Jest and React Testing Library on booking and payment flows, on an MVVM and Clean Architecture codebase.",
     },
     {
       title: "Shipped safely",
