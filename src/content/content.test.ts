@@ -1,10 +1,19 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { experience, nav, profile, projects, skills } from ".";
+import { education, experience, layerChapters, learning, nav, profile, projects, skills } from ".";
 import { projectSchema } from "./schema";
 
 const resumeFacts = readFileSync("docs/resume-facts.md", "utf8");
-const allContent = JSON.stringify({ profile, projects, experience, skills, nav });
+const allContent = JSON.stringify({
+  profile,
+  projects,
+  experience,
+  skills,
+  nav,
+  layerChapters,
+  education,
+  learning,
+});
 
 describe("content", () => {
   it("keeps the featured project order from the brief", () => {
@@ -28,7 +37,14 @@ describe("content", () => {
 
   it("keeps the learning stack out of everything except currentlyLearning", () => {
     const { currentlyLearning, ...rest } = profile;
-    const elsewhere = JSON.stringify({ rest, projects, skills, experience });
+    const elsewhere = JSON.stringify({
+      rest,
+      projects,
+      skills,
+      experience,
+      layerChapters,
+      learning,
+    });
     for (const tech of currentlyLearning) {
       expect(elsewhere, tech).not.toMatch(new RegExp(`\\b${tech}\\b`));
     }
@@ -58,6 +74,17 @@ describe("content", () => {
     for (const p of projects) {
       expect(p.cardSummary.length).toBeLessThanOrEqual(80);
       expect(p.cardSummary).not.toMatch(/…|\.\.\./);
+    }
+  });
+
+  it("only names Layers technologies that appear in the resume facts", () => {
+    for (const logo of layerChapters.flatMap((c) => c.logos)) {
+      const name = logo.name === "React" ? "React.js" : logo.name;
+      expect(resumeFacts, logo.name).toContain(name);
+    }
+    for (const c of layerChapters) {
+      const core = c.proof.value.split(" → ")[0]!;
+      expect(resumeFacts, c.proof.value).toContain(core);
     }
   });
 

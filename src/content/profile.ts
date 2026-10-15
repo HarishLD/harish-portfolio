@@ -14,12 +14,30 @@ export const profile: Profile = {
     github: "https://github.com/HarishLD",
   },
   howIWork: [
-    "Tests with Jest and React Testing Library; MVVM and Clean Architecture.",
-    "Branch-based CI/CD (feature, release, hotfix) across dev, QA, integration and production.",
-    "Code reviews, design discussions and mentoring as L2 Technical Lead.",
-    "UML diagrams, functional requirements and production readiness checklists before shipping.",
-    "Integrated OpenAI GPT responses into React.js interfaces for internal real-time tools.",
-    "Claude Code for code generation, test scaffolding, debugging and refactoring, with every change reviewed before merge.",
+    {
+      title: "Tested",
+      body: "Jest and React Testing Library on booking and payment flows; MVVM and Clean Architecture keep logic testable.",
+    },
+    {
+      title: "Shipped safely",
+      body: "Branch-based CI/CD (feature, release, hotfix) across dev, QA, integration and production.",
+    },
+    {
+      title: "Led",
+      body: "Code reviews, design discussions and mentoring as L2 Technical Lead.",
+    },
+    {
+      title: "Planned",
+      body: "UML diagrams, functional requirements and production readiness checklists before shipping.",
+    },
+    {
+      title: "AI in the product",
+      body: "Integrated OpenAI GPT responses into React.js interfaces for internal real-time tools.",
+    },
+    {
+      title: "AI in the workflow",
+      body: "Claude Code for code generation, test scaffolding, debugging and refactoring, with every change reviewed before merge.",
+    },
   ],
   currentlyLearning: ["Python", "FastAPI", "AWS", "Docker", "Terraform", "Java", "Spring Boot"],
 };

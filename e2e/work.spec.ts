@@ -19,7 +19,10 @@ test.describe("work", () => {
     page,
   }) => {
     await page.goto("/#work");
-    await page.getByRole("link", { name: /Healthcare Records Platform/ }).click();
+    await page
+      .locator("#work")
+      .getByRole("link", { name: /Healthcare Records Platform/ })
+      .click();
     await expect(page).toHaveURL(/\/work\/healthcare-records-platform$/);
     const dialog = page.getByRole("dialog", { name: "Healthcare Records Platform" });
     await expect(dialog).toBeVisible();
@@ -40,7 +43,10 @@ test.describe("work", () => {
 
   test("next project inside the overlay keeps Close one step from the page", async ({ page }) => {
     await page.goto("/#work");
-    await page.getByRole("link", { name: /Healthcare Records Platform/ }).click();
+    await page
+      .locator("#work")
+      .getByRole("link", { name: /Healthcare Records Platform/ })
+      .click();
     await page
       .getByRole("dialog")
       .getByRole("link", { name: /Next project/ })
@@ -75,7 +81,10 @@ test.describe("work", () => {
 
     test("cards are plain links to the full pages", async ({ page }) => {
       await page.goto("/");
-      await page.getByRole("link", { name: /Full Stack Notes App/ }).click();
+      await page
+        .locator("#work")
+        .getByRole("link", { name: /Full Stack Notes App/ })
+        .click();
       await expect(page).toHaveURL(/\/work\/notes-app$/);
       await expect(page.getByRole("heading", { level: 1 })).toHaveText("Full Stack Notes App");
     });

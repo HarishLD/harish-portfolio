@@ -65,6 +65,11 @@ Why: the hero morph finished within ~280px of scroll, too fast to notice. It mov
 - Mobile (below md): no pinning. Three swipeable chapter cards (scroll-snap), each showing its device state and its logos static.
 - Reduced motion: no pin, no rotation, no pop-outs; three static steps with the logos shown in place.
 
+Built in M4 (notes for later work):
+- The pinned layout activates only when the section is approached from above (still below the viewport). After a jump past it (dock link, hash) it stays as static steps until the next approach, so a pin spacer never appears above the reader.
+- React Native has no simple-icons mark; it uses the React atom (its actual logo) labelled "React Native". Salesforce and WebSockets are text labels.
+- Breakpoint: pinned at lg (1024px) and up; swipe cards below lg (tablets included).
+
 ## Tokens (in `src/app/globals.css`)
 
 paper #EFEDE6 · paper-2 #E4E1D8 · line #CFCBC0 · muted #4A4741 (text on paper) · ink #0B0B0A · ink-2 #1E1E1C · ink-3 #2B2A27 · fog #B5B1A8 (text on ink) · signal #C8FF2E

@@ -77,6 +77,8 @@ src/
     work/         bento grid, layer filters (island), cards
     case-study/   case study body + overlay shell
     screens/      recreated client screens (HTML/CSS, labelled, sample data)
+    layers/       Layers: chapters, inline simple-icons marks, pinned morph island
+    path/, how/   Path timeline and How I Work
   content/        typed resume-backed content, validated with zod at build time
 e2e/              Playwright specs
 .github/          CI workflow, Dependabot

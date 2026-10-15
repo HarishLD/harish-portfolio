@@ -2,12 +2,12 @@ import Image from "next/image";
 import { SignalLine } from "@/components/signal";
 import { Accent, ButtonLink, Container } from "@/components/ui";
 import type { Profile } from "@/content";
-import { HeroMorph } from "./hero-morph";
+import { Device } from "./device";
 
 /**
  * Name Wall. Server-rendered and readable with zero JS: role, name and CTAs
- * are plain HTML, the avatar is the preloaded LCP image. HeroMorph is the
- * only client island and layers the device morph on after idle.
+ * are plain HTML, the avatar is the preloaded LCP image. No client JS: the
+ * device is a static phone (the scroll morph lives in the Layers section).
  *
  * One grid, sized by the name itself (column 1 is exactly as wide as HARISH):
  * - Everywhere: the avatar is centered over the "I" (its center sits at 59.5%
@@ -17,7 +17,7 @@ import { HeroMorph } from "./hero-morph";
  *   sit under the name, left of the avatar; the device takes column 2.
  * - md to xl: he stands on a line; a small flat device sits beside him and the
  *   text follows below the line.
- * - Below md: no device (the reduced-motion chips stay, below the line).
+ * - Below md: no device.
  *
  * Vars: --F name size, --Ha avatar height (desktop: 72svh, max 680px).
  */
@@ -32,9 +32,8 @@ export function Hero({ profile }: { profile: Profile }) {
         className={[
           "relative grid grid-cols-[auto_1fr] pt-8 xl:pt-10",
           "[--F:var(--text-name)] [--Ha:min(calc(var(--F)*2.2),55svh)] xl:[--Ha:min(72svh,680px)]",
-          // Row 2: the avatar's height minus the part that overlaps the name.
-          // Row 3: reduced-motion chips (empty otherwise). Row 4: text.
-          "grid-rows-[auto_calc(var(--Ha)-var(--F)*0.7)_auto_auto]",
+          // Row 2: the avatar's height minus the part that overlaps the name. Row 3: text.
+          "grid-rows-[auto_calc(var(--Ha)-var(--F)*0.7)_auto]",
           "xl:min-h-[calc(var(--F)*0.12+var(--Ha))] xl:grid-rows-[auto_auto_1fr]",
         ].join(" ")}
       >
@@ -63,18 +62,17 @@ export function Hero({ profile }: { profile: Profile }) {
         />
 
         {/*
-          Desktop: a column past the end of the name, top aligned with the letters,
+          Static phone. Desktop: a column past the end of the name, top aligned with the letters,
           15% larger than the column (capped at 345px).
           md to xl: flat and small, between the avatar and the screen edge, on the line.
-          Below md: hidden. Chips (reduced motion only) go below the line.
+          Below md: hidden.
         */}
-        <HeroMorph
-          className="relative z-20 xl:col-start-2 xl:row-span-full xl:row-start-1 xl:mt-[calc(var(--F)*-0.06)] xl:ml-6 xl:w-[min(345px,calc((100%-1.5rem)*1.15))] xl:self-start xl:justify-self-start"
-          deviceClassName="relative z-20 col-span-full row-start-2 mb-5 max-md:hidden w-[min(calc(100%-var(--F)*1.539-var(--Ha)*0.349-0.75rem),calc(var(--Ha)-var(--F)*0.7-1.5rem),9rem)] self-end justify-self-end"
-          chipsClassName="col-span-full row-start-3 mt-4 justify-self-end xl:mt-0"
+        <Device
+          state="mobile"
+          className="relative z-20 col-span-full row-start-2 mb-5 w-[min(calc(100%-var(--F)*1.539-var(--Ha)*0.349-0.75rem),calc(var(--Ha)-var(--F)*0.7-1.5rem),9rem)] self-end justify-self-end max-md:hidden xl:col-span-1 xl:col-start-2 xl:row-span-full xl:row-start-1 xl:mt-[calc(var(--F)*-0.06)] xl:mb-0 xl:ml-6 xl:w-[min(345px,calc((100%-1.5rem)*1.15))] xl:self-start xl:justify-self-start"
         />
 
-        <div className="relative z-30 col-span-full row-start-4 flex flex-col gap-5 pt-8 [--signal-top:0.9rem] xl:col-span-1 xl:col-start-1 xl:row-span-2 xl:row-start-2 xl:max-w-[calc(var(--F)*1.539-var(--Ha)*0.349-1.5rem)] xl:pt-6">
+        <div className="relative z-30 col-span-full row-start-3 flex flex-col gap-5 pt-8 [--signal-top:0.9rem] xl:col-span-1 xl:col-start-1 xl:row-span-2 xl:row-start-2 xl:max-w-[calc(var(--F)*1.539-var(--Ha)*0.349-1.5rem)] xl:pt-6">
           <SignalLine tone="paper" variant="start" anchor="content" />
           <p className="text-lg font-medium xl:text-xl">{profile.role}</p>
           <Accent as="p" className="-mt-2 text-[clamp(2.25rem,8vw,2.75rem)] leading-[1.02]">

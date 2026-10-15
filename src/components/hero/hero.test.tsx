@@ -1,5 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { MotionProvider } from "@/components/motion";
 import { profile } from "@/content";
@@ -51,28 +50,11 @@ describe("Hero", () => {
     expect(stage(container)).toHaveAttribute("data-state", "mobile");
   });
 
-  it("lets CSS pick the chip row, so server HTML matches every preference", () => {
-    mockReducedMotion(false);
-    renderHero();
-    // Passive labels: full motion on desktop only. Buttons: reduced motion only.
-    const passive = screen.getAllByText("Backend").find((el) => el.tagName === "SPAN");
-    expect(passive?.parentElement?.className).toMatch(/\bhidden\b.*motion-safe:xl:flex/);
-    const group = screen.getByRole("group", { name: "Device layer", hidden: true });
-    expect(group.className).toMatch(/\bhidden\b.*motion-reduce:flex/);
-  });
-
-  it("switches state when a chip is tapped (reduced motion)", async () => {
+  it("shows a static phone: no chips, no layer buttons", () => {
     mockReducedMotion(true);
-    const user = userEvent.setup();
     const { container } = renderHero();
-    const group = screen.getByRole("group", { name: "Device layer" });
-    expect(within(group).getAllByRole("button")).toHaveLength(3);
-
-    await user.click(within(group).getByRole("button", { name: "Backend" }));
-    expect(stage(container)).toHaveAttribute("data-state", "backend");
-    expect(within(group).getByRole("button", { name: "Backend" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
+    expect(stage(container)).toHaveAttribute("data-state", "mobile");
+    expect(screen.queryByRole("group", { name: "Device layer" })).toBeNull();
+    expect(screen.queryByText("Backend")).toBeNull();
   });
 });
