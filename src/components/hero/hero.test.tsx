@@ -24,8 +24,6 @@ function renderHero() {
   );
 }
 
-const stage = (container: HTMLElement) => container.querySelector("[data-device-stage]");
-
 describe("Hero", () => {
   afterEach(() => vi.restoreAllMocks());
 
@@ -44,17 +42,14 @@ describe("Hero", () => {
     expect(screen.queryByRole("link", { name: /resume/i })).toBeNull();
   });
 
-  it("starts the device as a phone", () => {
+  it("makes the phone a labelled link to the Pet Care case study", () => {
     mockReducedMotion(false);
     const { container } = renderHero();
-    expect(stage(container)).toHaveAttribute("data-state", "mobile");
-  });
-
-  it("shows a static phone: no chips, no layer buttons", () => {
-    mockReducedMotion(true);
-    const { container } = renderHero();
-    expect(stage(container)).toHaveAttribute("data-state", "mobile");
+    const link = screen.getByRole("link", {
+      name: "Pet Care Platform booking demo, open case study",
+    });
+    expect(link).toHaveAttribute("href", "/work/pet-care-platform");
+    expect(container.querySelector(".booking-demo [data-demo-tick]")).not.toBeNull();
     expect(screen.queryByRole("group", { name: "Device layer" })).toBeNull();
-    expect(screen.queryByText("Backend")).toBeNull();
   });
 });

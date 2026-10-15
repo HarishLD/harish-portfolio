@@ -1,13 +1,18 @@
 import { cx } from "@/lib/cx";
 import { BrowserFrame, PhoneFrame, T } from "./frames";
 
-/** Recreated booking flow (mobile): pick a day, a service and a free slot. */
+/**
+ * Recreated booking flow (mobile): pick a day, a service and a free slot.
+ * Selected states are separate layers (`data-demo-*`) so the hero can loop the
+ * flow with CSS opacity/transform keyframes (see `.booking-demo` in
+ * globals.css). Without that class it renders the static, selected state.
+ */
 export function PetBookingPhone({ className }: { className?: string }) {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
   const slots = ["09:00", "09:30", "10:30", "11:00", "13:30", "14:00", "15:30", "16:00"];
   return (
     <PhoneFrame className={className}>
-      <div className="flex flex-1 flex-col gap-[4cqw] px-[6cqw] pb-[6cqw]">
+      <div className="relative flex flex-1 flex-col gap-[4cqw] px-[6cqw] pb-[6cqw]">
         <T s={6.5} className="font-display uppercase">
           Book a visit
         </T>
@@ -15,15 +20,23 @@ export function PetBookingPhone({ className }: { className?: string }) {
           {days.map((d, i) => (
             <span
               key={d}
-              className={cx(
-                "flex flex-1 flex-col items-center rounded-[4cqw] py-[2.5cqw]",
-                i === 2 ? "bg-ink text-paper" : "bg-paper-2",
-              )}
+              className="relative flex flex-1 flex-col items-center rounded-[4cqw] bg-paper-2 py-[2.5cqw]"
             >
               <T s={3.2}>{d}</T>
               <T s={5} className="font-medium">
                 {12 + i}
               </T>
+              {i === 2 && (
+                <span
+                  data-demo-day=""
+                  className="absolute inset-0 flex flex-col items-center rounded-[4cqw] bg-ink py-[2.5cqw] text-paper"
+                >
+                  <T s={3.2}>{d}</T>
+                  <T s={5} className="font-medium">
+                    {12 + i}
+                  </T>
+                </span>
+              )}
             </span>
           ))}
         </div>
@@ -39,20 +52,54 @@ export function PetBookingPhone({ className }: { className?: string }) {
               key={t}
               className={cx(
                 "relative flex items-center justify-center rounded-[3.5cqw] py-[3cqw]",
-                i === 2 && "bg-ink text-paper",
-                i === 4 && "bg-paper-2 text-muted line-through",
-                i !== 2 && i !== 4 && "border border-line",
+                i === 4 ? "bg-paper-2 text-muted line-through" : "border border-line",
               )}
             >
               <T s={4}>{t}</T>
               {i === 2 && (
-                <span className="absolute top-[1.8cqw] right-[2.2cqw] size-[2cqw] rounded-pill bg-signal" />
+                <span
+                  data-demo-slot=""
+                  className="absolute -inset-px flex items-center justify-center rounded-[3.5cqw] bg-ink text-paper"
+                >
+                  <T s={4}>{t}</T>
+                  <span className="absolute top-[1.8cqw] right-[2.2cqw] size-[2cqw] rounded-pill bg-signal" />
+                </span>
               )}
             </span>
           ))}
         </div>
-        <span className="mt-auto flex items-center justify-center rounded-pill bg-ink py-[3.6cqw] text-paper">
-          <T s={4.2}>Confirm 10:30</T>
+        <span
+          data-demo-press=""
+          className="relative mt-auto grid place-items-center rounded-pill bg-ink py-[3.6cqw] text-[4.2cqw] leading-tight text-paper"
+        >
+          <span data-demo-idle="" className="opacity-0 [grid-area:1/1]">
+            Pick a time
+          </span>
+          <span data-demo-ready="" className="[grid-area:1/1]">
+            Confirm 10:30
+          </span>
+        </span>
+
+        {/* Confirmation, shown only by the hero demo (and its reduced-motion still frame). */}
+        <span
+          data-demo-tick=""
+          className="absolute inset-0 flex flex-col items-center justify-center gap-[4cqw] bg-paper opacity-0"
+        >
+          <span className="flex size-[22cqw] items-center justify-center rounded-pill bg-ink">
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              className="size-[11cqw] fill-none stroke-signal stroke-[3]"
+            >
+              <path d="M5 12.5 10 17.5 19 7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <T s={6} className="font-display uppercase">
+            Booked
+          </T>
+          <T s={3.8} className="text-muted">
+            Wed 14 · 10:30 · Grooming
+          </T>
         </span>
       </div>
     </PhoneFrame>

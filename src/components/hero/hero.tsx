@@ -2,12 +2,13 @@ import Image from "next/image";
 import { SignalLine } from "@/components/signal";
 import { Accent, ButtonLink, Container } from "@/components/ui";
 import type { Profile } from "@/content";
-import { Device } from "./device";
+import { HeroPhone } from "./hero-phone";
 
 /**
  * Name Wall. Server-rendered and readable with zero JS: role, name and CTAs
- * are plain HTML, the avatar is the preloaded LCP image. No client JS: the
- * device is a static phone (the scroll morph lives in the Layers section).
+ * are plain HTML, the avatar is the preloaded LCP image. The phone plays a
+ * CSS-only booking demo; its tilt and off-screen pause load after idle. The
+ * scroll morph lives in the Layers section.
  *
  * One grid, sized by the name itself (column 1 is exactly as wide as HARISH):
  * - Everywhere: the avatar is centered over the "I" (its center sits at 59.5%
@@ -67,10 +68,7 @@ export function Hero({ profile }: { profile: Profile }) {
           md to xl: flat and small, between the avatar and the screen edge, on the line.
           Below md: hidden.
         */}
-        <Device
-          state="mobile"
-          className="relative z-20 col-span-full row-start-2 mb-5 w-[min(calc(100%-var(--F)*1.539-var(--Ha)*0.349-0.75rem),calc(var(--Ha)-var(--F)*0.7-1.5rem),9rem)] self-end justify-self-end max-md:hidden xl:col-span-1 xl:col-start-2 xl:row-span-full xl:row-start-1 xl:mt-[calc(var(--F)*-0.06)] xl:mb-0 xl:ml-6 xl:w-[min(345px,calc((100%-1.5rem)*1.15))] xl:self-start xl:justify-self-start"
-        />
+        <HeroPhone className="relative z-20 col-span-full row-start-2 mb-5 w-[min(calc(100%-var(--F)*1.539-var(--Ha)*0.349-0.75rem),calc(var(--Ha)-var(--F)*0.7-1.5rem),9rem)] self-end justify-self-end max-md:hidden xl:col-span-1 xl:col-start-2 xl:row-span-full xl:row-start-1 xl:mt-[calc(var(--F)*-0.06)] xl:mb-0 xl:ml-6 xl:w-[min(345px,calc((100%-1.5rem)*1.15))] xl:self-start xl:justify-self-start" />
 
         <div className="relative z-30 col-span-full row-start-3 flex flex-col gap-5 pt-8 [--signal-top:0.9rem] xl:col-span-1 xl:col-start-1 xl:row-span-2 xl:row-start-2 xl:max-w-[calc(var(--F)*1.539-var(--Ha)*0.349-1.5rem)] xl:pt-6">
           <SignalLine tone="paper" variant="start" anchor="content" />

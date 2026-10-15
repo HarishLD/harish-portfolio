@@ -43,7 +43,7 @@ Name: "Signal". Ink & Signal restraint + cinematic hero. Must not feel like a fi
 
 - Hero "Name Wall": oversized HARISH (Anton), avatar standing in front of the letters, fake-3D device beside it, serif line "builds across every layer.", CTAs "See the work" (primary) + "Download resume". Name, role, CTA readable instantly.
 - Morph: lives in the Layers section (from M4), not the hero. Device goes phone → browser → server rack across three pinned chapters. Fake 3D with CSS/SVG transforms first; true 3D only if this lacks impact (desktop only).
-- Hero device: a static tilted phone beside the avatar on desktop (no scroll morph, no chips); hidden below md.
+- Hero device: the recreated Pet Care booking phone beside the avatar, playing a CSS-only booking loop (~7s); desktop adds a cursor tilt (max 6deg, loaded after idle) and an idle float; it links to the Pet Care case study; reduced motion shows the confirmed still frame; hidden below md.
 - Signal: the lime line/dot that threads sections and ends as the contact CTA.
 - Nav: desktop top bar morphs into floating bottom dock (avatar head + links + "Let's talk"). Mobile: menu button → full-screen menu with huge Anton links.
 - Projects: interactive bento, filters All/Mobile/Web/Backend, recreated screens, real metrics, expandable case studies.
