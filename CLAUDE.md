@@ -70,6 +70,12 @@ Built in M4 (notes for later work):
 - React Native has no simple-icons mark; it uses the React atom (its actual logo) labelled "React Native". Salesforce and WebSockets are text labels.
 - Breakpoint: pinned at lg (1024px) and up; swipe cards below lg (tablets included).
 
+## M5 notes
+
+- Resume: `getResumeHref()` (src/lib/resume.ts) checks `public/resume.pdf` at build; the hero and contact download buttons render only when it exists. The PDF must be the phone-free version.
+- Indexing: `indexable` (src/lib/site.ts) is true only when `VERCEL_ENV=production`; it drives `robots.ts` and the page robots meta. Previews, local and CI builds stay noindex.
+- OG images use next/og with Anton vendored as TTF in `src/assets/og` (Satori can't read WOFF2); asset reads are `"use cache"` so the images prerender. Keep that folder under ~400KB (500KB bundle limit).
+
 ## Tokens (in `src/app/globals.css`)
 
 paper #EFEDE6 · paper-2 #E4E1D8 · line #CFCBC0 · muted #4A4741 (text on paper) · ink #0B0B0A · ink-2 #1E1E1C · ink-3 #2B2A27 · fog #B5B1A8 (text on ink) · signal #C8FF2E

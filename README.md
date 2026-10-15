@@ -79,6 +79,7 @@ src/
     screens/      recreated client screens (HTML/CSS, labelled, sample data)
     layers/       Layers: chapters, inline simple-icons marks, pinned morph island
     path/, how/   Path timeline and How I Work
+    contact/      Contact (signal lands in the CTA), copy-email island
   content/        typed resume-backed content, validated with zod at build time
 e2e/              Playwright specs
 .github/          CI workflow, Dependabot

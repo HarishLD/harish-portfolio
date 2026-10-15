@@ -16,6 +16,12 @@ function resolveSiteUrl(): URL {
   return new URL("http://localhost:3000");
 }
 
+/**
+ * Search engines may index only the production deployment. Previews, local
+ * builds and CI stay noindex (VERCEL_ENV is "production" only on Vercel prod).
+ */
+export const indexable = process.env.VERCEL_ENV === "production";
+
 export const site = {
   name: profile.name,
   shortName: profile.shortName,

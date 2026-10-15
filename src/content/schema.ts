@@ -79,8 +79,8 @@ export const profileSchema = z.object({
   headlineStack: z.array(z.string().min(1)).min(1),
   email: z.email(),
   links: z.object({ linkedin: httpsUrl, github: httpsUrl }),
-  /** Phone-free public PDF. Optional until M5: CTAs render nothing when it is missing. */
-  resumeUrl: z.string().startsWith("/").optional(),
+  /** Shown in Contact. Location-neutral by design. */
+  availability: z.string().min(1),
   /** Practices for "How I Work" (internal AI tooling lives here, not as a project). */
   howIWork: z.array(z.object({ title: z.string().min(1), body: z.string().min(1) })).min(1),
   /** The only place the learning stack may appear. */

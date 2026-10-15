@@ -25,8 +25,14 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-// jsdom gaps: browser APIs the nav and motion provider rely on.
+// jsdom gaps: browser APIs the nav, motion provider and contact rely on.
 if (typeof window !== "undefined") {
+  if (!navigator.clipboard) {
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: () => Promise.resolve() },
+      configurable: true,
+    });
+  }
   window.matchMedia ??= vi.fn((query: string) => ({
     matches: false,
     media: query,
