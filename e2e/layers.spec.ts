@@ -80,6 +80,15 @@ test.describe("layers, desktop", () => {
   });
 });
 
+test("the device's CSS loops pause while Layers is off screen", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("#layers")).toHaveAttribute("data-paused", "");
+  await expect(page.locator("#layers [data-log]").first()).toHaveCSS(
+    "animation-play-state",
+    "paused",
+  );
+});
+
 test.describe("layers, phones", () => {
   test.beforeEach(({ viewport }) => test.skip(isDesktop(viewport?.width), "phones only"));
 

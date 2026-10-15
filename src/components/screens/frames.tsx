@@ -12,7 +12,7 @@ import { cx } from "@/lib/cx";
 export function PhoneFrame({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className={cx("@container", className)}>
-      <div className="aspect-[9/19] rounded-[13cqw] bg-ink p-[3.2cqw] shadow-[0.6rem_0.7rem_0_var(--color-line)]">
+      <div className="aspect-[9/19] rounded-[13cqw] bg-(--device-body,var(--color-ink)) p-[3.2cqw] shadow-[0.6rem_0.7rem_0_var(--device-shadow,var(--color-line))]">
         <div className="relative size-full overflow-hidden rounded-[10cqw] bg-paper text-ink">
           <span className="absolute top-[2.5cqw] left-1/2 h-[4cqw] w-[28cqw] -translate-x-1/2 rounded-pill bg-ink" />
           <div className="flex size-full flex-col pt-[10cqw]">{children}</div>
@@ -33,7 +33,7 @@ export function BrowserFrame({
 }) {
   return (
     <div className={cx("@container", className)}>
-      <div className="aspect-[16/10] rounded-[2.4cqw] bg-ink p-[0.9cqw] shadow-[0.6rem_0.7rem_0_var(--color-line)]">
+      <div className="aspect-[16/10] rounded-[2.4cqw] bg-(--device-body,var(--color-ink)) p-[0.9cqw] shadow-[0.6rem_0.7rem_0_var(--device-shadow,var(--color-line))]">
         <div className="flex size-full flex-col overflow-hidden rounded-[1.6cqw] bg-paper text-ink">
           <div className="flex h-[6.5cqw] shrink-0 items-center gap-[0.9cqw] border-b border-line bg-paper-2 px-[1.8cqw]">
             {[0, 1, 2].map((i) => (

@@ -8,7 +8,7 @@ import { ContactSection } from ".";
 describe("ContactSection", () => {
   it("ends the signal thread in a mailto CTA", () => {
     const { container } = render(<ContactSection />);
-    expect(screen.getByRole("link", { name: /let.s talk/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /^email me/i })).toHaveAttribute(
       "href",
       `mailto:${profile.email}`,
     );
@@ -27,11 +27,20 @@ describe("ContactSection", () => {
   it("links LinkedIn and GitHub in a new tab, and never a phone number", () => {
     const { container } = render(<ContactSection />);
     expect(screen.getByRole("link", { name: /linkedin/i })).toHaveAttribute("target", "_blank");
-    expect(screen.getByRole("link", { name: /github/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /^GitHub\s*github\.com/i })).toHaveAttribute(
       "href",
       profile.links.github,
     );
     expect(container.querySelector('a[href^="tel:"]')).toBeNull();
+  });
+
+  it("has a footer with the copyright line and a link to the source", () => {
+    render(<ContactSection />);
+    expect(screen.getByText("© 2026 Harish Doraiswamy")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /source on github/i })).toHaveAttribute(
+      "href",
+      "https://github.com/HarishLD/harish-portfolio",
+    );
   });
 
   it("hides the resume download until public/resume.pdf exists", () => {

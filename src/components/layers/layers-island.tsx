@@ -67,6 +67,17 @@ export function LayersIsland({ chapters, skipTo }: { chapters: ChapterSlot[]; sk
   const [active, setActive] = useState(0);
   const pinned = ready && isLg && !motion.reduced;
 
+  // Pause the device's CSS loops (LEDs, request log) while the section is off screen.
+  useEffect(() => {
+    const section = rootRef.current?.closest("section");
+    if (!section) return;
+    const io = new IntersectionObserver(([entry]) =>
+      section.toggleAttribute("data-paused", !entry?.isIntersecting),
+    );
+    io.observe(section);
+    return () => io.disconnect();
+  }, []);
+
   // Load GSAP + ScrollTrigger one viewport ahead of the section, desktop + full motion only.
   // Approached from above only (see below); the observer stays on until then.
   useEffect(() => {
@@ -208,7 +219,7 @@ export function LayersIsland({ chapters, skipTo }: { chapters: ChapterSlot[]; sk
           >
             Skip Layers ↓
           </a>
-          <div className="grid w-full grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)_auto] items-center gap-10">
+          <div className="grid w-full grid-cols-[minmax(0,0.9fr)_minmax(0,1.5fr)_auto] items-center gap-10">
             {/* All chapters share one grid cell, so the panel is as tall as the longest. */}
             <div className="grid items-center">
               {chapters.map((c) => (
@@ -218,14 +229,14 @@ export function LayersIsland({ chapters, skipTo }: { chapters: ChapterSlot[]; sk
               ))}
             </div>
 
-            <div className="relative mx-auto w-[min(340px,26vw)]">
+            <div className="relative mx-auto w-[min(440px,33vw)]">
               <span data-orbit-center="" className="absolute inset-[30%]" />
               <Device state={chapters[active]?.id ?? "mobile"} threeD className="w-full" />
               {chapters.map((c, i) => (
                 <div
                   key={c.id}
                   data-chapter-orbit={i}
-                  className="pointer-events-none absolute -inset-[38%]"
+                  className="pointer-events-none absolute -inset-[28%]"
                 >
                   {c.orbitLogos}
                 </div>

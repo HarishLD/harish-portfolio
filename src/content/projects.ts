@@ -169,9 +169,17 @@ export const projects: Project[] = [
     stack: ["React.js", "HTML/CSS templating"],
     delivery: "4 days",
     metrics: [
+      {
+        value: "4 days",
+        label: "from brief to shipped",
+        short: "to ship",
+        scope: "own",
+        featured: true,
+      },
       { value: "5", label: "step form workflow", short: "form steps", scope: "own" },
-      { value: "6", label: "page dynamic PDF", short: "PDF pages", scope: "own", featured: true },
+      { value: "6", label: "page dynamic PDF", short: "PDF pages", scope: "own" },
     ],
+    featuredNote: "5-step form + 6-page PDF engine",
     highlights: ["Reusable form components and a templated HTML/CSS rendering layer."],
     screens: "recreated",
   },

@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("contact", () => {
-  test("the signal line lands in the Let's talk CTA (desktop)", async ({ page, viewport }) => {
+  test("the signal line lands in the Email me CTA (desktop)", async ({ page, viewport }) => {
     test.skip((viewport?.width ?? 0) < 768, "the gutter line shows from md");
     await page.goto("/#contact");
-    const cta = page.locator("#contact").getByRole("link", { name: /let.s talk/i });
+    const cta = page.locator("#contact").getByRole("link", { name: /^email me/i });
     await expect(cta).toHaveAttribute("href", /^mailto:/);
     const [line, button] = await Promise.all([
       page.locator("#contact [data-signal-head]").boundingBox(),
@@ -24,6 +24,19 @@ test.describe("contact", () => {
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
       "harishdoraiswamy1411@gmail.com",
     );
+  });
+
+  test("the floating dock steps aside while Contact is in view", async ({ page, viewport }) => {
+    test.skip((viewport?.width ?? 0) < 1024, "the dock is desktop only");
+    await page.goto("/");
+    await page.mouse.wheel(0, 900);
+    const nav = page.getByRole("navigation", { name: "Primary" });
+    await expect(nav).toHaveAttribute("data-docked", "true");
+    await page.evaluate(() => document.getElementById("contact")!.scrollIntoView());
+    await expect(nav).toHaveAttribute("data-dock-hidden", "true");
+    await expect(nav).toHaveCSS("opacity", "0");
+    await page.evaluate(() => document.getElementById("work")!.scrollIntoView());
+    await expect(nav).toHaveAttribute("data-dock-hidden", "false");
   });
 
   test("no resume button until the PDF exists", async ({ page }) => {

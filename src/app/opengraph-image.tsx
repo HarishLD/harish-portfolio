@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { profile } from "@/content";
-import { OG_COLORS as c, OG_SIZE, ogAssets } from "@/lib/og/assets";
+import { OG_COLORS as c, OG_SIZE, ogFonts, ogImage } from "@/lib/og/assets";
 
 export const alt = `${profile.name}, ${profile.role}: mobile, web and backend`;
 export const size = OG_SIZE;
@@ -8,7 +8,7 @@ export const contentType = "image/png";
 
 /** Home card: the Name Wall in miniature (ink, HARISH, avatar, one lime dot). */
 export default async function Image() {
-  const { fonts, avatarSrc } = await ogAssets();
+  const [fonts, avatarSrc] = await Promise.all([ogFonts(), ogImage("avatar.png")]);
   return new ImageResponse(
     <div
       style={{

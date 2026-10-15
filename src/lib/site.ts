@@ -29,4 +29,6 @@ export const site = {
   description:
     "Software engineer building products across mobile, web and backend with React Native, React, Node.js and SQL.",
   url: resolveSiteUrl(),
+  /** Linked from the footer. Private until launch: make it public before relying on it. */
+  repo: "https://github.com/HarishLD/harish-portfolio",
 } as const;

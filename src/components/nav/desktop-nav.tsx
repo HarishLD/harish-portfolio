@@ -30,6 +30,19 @@ export function DesktopNav({ data }: { data: NavData }) {
   const lib = useRef<{ gsap: Gsap; flip: Flip } | null>(null);
   const flipState = useRef<ReturnType<Flip["getState"]> | null>(null);
   const [docked, setDocked] = useState(false);
+  // The dock steps aside while Contact is on screen, so it never covers those links.
+  const [contactInView, setContactInView] = useState(false);
+  const dockHidden = docked && contactInView;
+
+  useEffect(() => {
+    const contact = document.getElementById("contact");
+    if (!contact) return;
+    const io = new IntersectionObserver(([entry]) => setContactInView(!!entry?.isIntersecting), {
+      rootMargin: "0px 0px -15% 0px",
+    });
+    io.observe(contact);
+    return () => io.disconnect();
+  }, []);
   const dockedRef = useRef(false);
 
   useEffect(() => {
@@ -116,8 +129,11 @@ export function DesktopNav({ data }: { data: NavData }) {
         ref={navRef}
         aria-label="Primary"
         data-docked={docked}
+        data-dock-hidden={dockHidden}
+        inert={dockHidden}
         className={cx(
-          "fixed inset-x-0 z-40",
+          "fixed inset-x-0 z-40 transition-[translate,opacity] duration-(--duration-ui) ease-(--ease-out-signal)",
+          dockHidden && "translate-y-[calc(100%+2rem)] opacity-0",
           docked
             ? "pointer-events-none bottom-6 flex justify-center"
             : "top-0 border-b border-line bg-paper",
