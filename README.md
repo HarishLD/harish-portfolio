@@ -79,6 +79,7 @@ src/
     screens/      recreated client screens (HTML/CSS, labelled, sample data)
     layers/       Layers: chapters, inline simple-icons marks, pinned morph island
     path/, how/   Path timeline and How I Work
+    contact/      Contact (signal lands in the CTA), copy-email island
   content/        typed resume-backed content, validated with zod at build time
 e2e/              Playwright specs
 .github/          CI workflow, Dependabot
@@ -96,7 +97,7 @@ e2e/              Playwright specs
 - [x] M1 Foundations: tokens, primitives, content layer, navigation, motion provider
 - [x] M2 Hero: Name Wall, morphing device, signal
 - [x] M3 Work: bento grid, filters, case studies
-- [ ] M4 Layers, Path, How I Work
+- [x] M4 Layers, Path, How I Work
 - [ ] M5 Contact, resume, SEO (indexing switched on here)
 - [ ] M6 QA and polish
 

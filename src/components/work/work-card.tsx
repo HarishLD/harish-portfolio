@@ -83,6 +83,9 @@ export function WorkCard({ project, flagship }: { project: Project; flagship?: b
           </span>
         </p>
       )}
+      {project.featuredNote && (
+        <p className={cx("mt-2", ink ? "text-fog" : "text-muted")}>{project.featuredNote}</p>
+      )}
       {platform.length > 0 && (
         <p className={cx("mt-2", ink ? "text-fog" : "text-muted")}>
           Platform: {platform.map((m) => `${m.value} ${m.short}`).join(" · ")}

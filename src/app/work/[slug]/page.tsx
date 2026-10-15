@@ -12,7 +12,13 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/work/[slug]">): Promise<Metadata> {
   const project = getProject((await params).slug);
   if (!project) return {};
-  return { title: project.name, description: project.summary };
+  const path = `/work/${project.slug}`;
+  return {
+    title: project.name,
+    description: project.summary,
+    alternates: { canonical: path },
+    openGraph: { type: "article", url: path, title: project.name, description: project.summary },
+  };
 }
 
 /** Full case study page: direct visits, refreshes and no-JS navigation land here. */

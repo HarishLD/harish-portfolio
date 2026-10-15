@@ -16,6 +16,12 @@ function resolveSiteUrl(): URL {
   return new URL("http://localhost:3000");
 }
 
+/**
+ * Search engines may index only the production deployment. Previews, local
+ * builds and CI stay noindex (VERCEL_ENV is "production" only on Vercel prod).
+ */
+export const indexable = process.env.VERCEL_ENV === "production";
+
 export const site = {
   name: profile.name,
   shortName: profile.shortName,
@@ -23,4 +29,6 @@ export const site = {
   description:
     "Software engineer building products across mobile, web and backend with React Native, React, Node.js and SQL.",
   url: resolveSiteUrl(),
+  /** Linked from the footer. Private until launch: make it public before relying on it. */
+  repo: "https://github.com/HarishLD/harish-portfolio",
 } as const;

@@ -152,6 +152,43 @@
   }
 }
 
+/* Layers device: server LEDs blink and the request log scrolls (opacity/transform only). */
+@layer components {
+  .device-live [data-led] {
+    animation: led-blink 1.8s steps(1, end) infinite;
+  }
+  .device-live [data-log] {
+    animation: log-scroll 16s linear infinite;
+  }
+  [data-paused] .device-live * {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .device-live [data-led],
+    .device-live [data-log] {
+      animation: none !important;
+    }
+  }
+}
+
+@keyframes led-blink {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0.25;
+  }
+}
+@keyframes log-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
 @keyframes demo-day {
   0%,
   8% {

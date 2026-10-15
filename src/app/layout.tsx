@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { MotionProvider } from "@/components/motion";
 import { SiteNav } from "@/components/nav";
 import { fontVariables } from "./fonts";
-import { site } from "@/lib/site";
+import { indexable, site } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,12 +14,15 @@ export const metadata: Metadata = {
   description: site.description,
   openGraph: {
     type: "website",
+    url: "/",
     siteName: site.name,
     title: `${site.name} · ${site.role}`,
     description: site.description,
   },
-  // Previews stay out of search results until production is ready (flipped in M5).
-  robots: { index: false, follow: false },
+  twitter: { card: "summary_large_image" },
+  alternates: { canonical: "/" },
+  // Only the production deployment is indexed; previews and local builds stay out.
+  robots: indexable ? { index: true, follow: true } : { index: false, follow: false },
 };
 
 export const viewport: Viewport = {

@@ -1,110 +1,76 @@
+import { PetBookingPhone, PetScheduleBrowser } from "@/components/screens/pet-care";
 import type { Layer } from "@/content";
 import { cx } from "@/lib/cx";
 
 /**
- * The hero device in its three forms, stacked in one square stage:
+ * The Layers device in its three forms, stacked in one square stage:
  * phone (mobile) → browser (web) → server (backend).
  * Pure CSS fake 3D on desktop: a tilted stage (rotateY -24deg, rotateX 8deg),
  * flat below xl (tilted layers render with stepped edges on high-DPR phones). Matte ink
  * bodies with a 9px bezel, a hard offset shadow and one soft floor shadow.
- * Screens are abstract UI, not client product screens.
+ * Screens are the recreated Pet Care UI (sample data): booking phone, schedule
+ * dashboard, and a server rack with blinking LEDs over a scrolling request
+ * log (CSS-only, see `.device-live` in globals.css).
  *
  * `data-state` on the stage picks the visible face with plain CSS, so it works
- * with no JS and under reduced motion. The hero shows the phone; the Layers
- * section drives the morph with GSAP (`threeD` keeps the tilt at every size).
+ * with no JS and under reduced motion. The pinned Layers layout drives the
+ * morph with GSAP (`threeD` keeps the tilt at every size).
  */
 
-// Body and hard-shadow colours are variables so the device reads on ink too
-// (Layers sets --device-body / --device-shadow); defaults are for paper.
-const body =
-  "absolute rounded-(--r) bg-(--device-body,var(--color-ink)) p-[var(--bezel)] shadow-[min(14px,4cqw)_min(16px,4.6cqw)_0_var(--device-shadow,var(--color-line))]";
+// Body and hard-shadow colours are variables (--device-body / --device-shadow)
+// so the device reads on ink in Layers; defaults are for paper.
 const face =
   "motion-fade opacity-0 transition-opacity duration-(--duration-ui) xl:will-change-transform";
 
-function Bar({ className }: { className?: string }) {
-  return <span className={cx("block rounded-pill bg-ink-3", className)} />;
-}
+const LOG = [
+  ["GET", "/slots?day=14", "200", "18ms"],
+  ["POST", "/bookings", "201", "88ms"],
+  ["PATCH", "/crm/sync", "200", "31ms"],
+  ["GET", "/bookings/today", "200", "42ms"],
+  ["POST", "/payments/intent", "201", "64ms"],
+  ["WS", "/video/session", "101", "open"],
+  ["GET", "/locations", "200", "12ms"],
+  ["POST", "/crm/sync", "200", "27ms"],
+];
 
+/** Phone: the recreated booking screen. */
 function PhoneFace() {
   return (
     <div
       data-face="mobile"
       className={cx(
         face,
-        body,
-        "inset-y-[3%] left-[27%] w-[46%] group-data-[state=mobile]/stage:opacity-100",
+        "absolute inset-y-[1.5%] left-[27%] w-[46%] group-data-[state=mobile]/stage:opacity-100",
       )}
     >
-      <div className="flex h-full flex-col gap-[6%] overflow-hidden rounded-[calc(var(--r)-var(--bezel))] bg-ink-2 p-[9%]">
-        <div className="mx-auto h-[3%] w-[34%] rounded-pill bg-ink" />
-        <Bar className="h-[4%] w-[55%] bg-fog/70" />
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="flex items-center gap-[8%] rounded-inner bg-ink-3 p-[8%]">
-            <span
-              className={cx(
-                "aspect-square w-[22%] rounded-pill",
-                i === 0 ? "bg-signal" : "bg-ink-2",
-              )}
-            />
-            <div className="flex flex-1 flex-col gap-1.5">
-              <Bar className="h-1.5 w-[80%] bg-fog/50" />
-              <Bar className="h-1.5 w-[50%] bg-fog/25" />
-            </div>
-          </div>
-        ))}
-        <Bar className="mt-auto h-[7%] w-full bg-paper/85" />
-      </div>
+      <PetBookingPhone className="w-full" />
     </div>
   );
 }
 
+/** Browser: the recreated location schedule. */
 function BrowserFace() {
   return (
     <div
       data-face="web"
       className={cx(
         face,
-        body,
-        "inset-x-0 top-[18%] h-[64%] rounded-[22px] group-data-[state=web]/stage:opacity-100",
+        "absolute inset-x-0 top-[18.75%] group-data-[state=web]/stage:opacity-100",
       )}
     >
-      <div className="flex h-full flex-col overflow-hidden rounded-[13px] bg-ink-2">
-        <div className="flex h-[12%] items-center gap-1.5 bg-ink-3 px-[3%]">
-          {[0, 1, 2].map((i) => (
-            <span key={i} className="size-2 rounded-pill bg-fog/40" />
-          ))}
-          <Bar className="ml-[4%] h-[44%] w-[46%] bg-ink-2" />
-        </div>
-        <div className="grid flex-1 grid-cols-[22%_1fr] gap-[3%] p-[4%]">
-          <div className="flex flex-col gap-2">
-            <Bar className="h-2 w-[80%] bg-fog/50" />
-            <Bar className="h-2 w-[60%] bg-fog/25" />
-            <Bar className="h-2 w-[70%] bg-fog/25" />
-          </div>
-          <div className="grid grid-cols-2 grid-rows-2 gap-[6%]">
-            {[0, 1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="flex flex-col justify-end gap-1.5 rounded-inner bg-ink-3 p-[8%]"
-              >
-                {i === 0 && <span className="size-2 rounded-pill bg-signal" />}
-                <Bar className="h-1.5 w-[70%] bg-fog/40" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <PetScheduleBrowser className="w-full" />
     </div>
   );
 }
 
+/** Server: three rack units with blinking LEDs over a scrolling request log (sample data). */
 function ServerFace() {
   return (
     <div
       data-face="backend"
       className={cx(
         face,
-        "absolute inset-x-[8%] top-[16%] flex h-[68%] flex-col justify-center gap-[6%]",
+        "absolute inset-x-[6%] inset-y-[10%] flex flex-col gap-[3.5%]",
         "group-data-[state=backend]/stage:opacity-100",
       )}
     >
@@ -112,17 +78,38 @@ function ServerFace() {
         <div
           key={i}
           data-server-unit=""
-          className="relative flex h-[26%] items-center gap-[4%] rounded-[18px] bg-(--device-body,var(--color-ink)) px-[7%] shadow-[min(14px,4cqw)_min(16px,4.6cqw)_0_var(--device-shadow,var(--color-line))]"
+          className="relative flex h-[15%] shrink-0 items-center gap-[3%] rounded-[4cqw] bg-(--device-body,var(--color-ink)) px-[6%] shadow-[min(14px,4cqw)_min(16px,4.6cqw)_0_var(--device-shadow,var(--color-line))]"
         >
-          <div className="flex flex-1 flex-col gap-[10%] self-stretch py-[6%]">
+          <div className="flex flex-1 flex-col gap-[1.4cqw]">
             {[0, 1, 2].map((v) => (
-              <span key={v} className="block h-[3px] w-full rounded-pill bg-ink-3" />
+              <span key={v} className="block h-[0.7cqw] w-full rounded-pill bg-ink-2" />
             ))}
           </div>
-          <span className={cx("size-2.5 rounded-pill", i === 1 ? "bg-signal" : "bg-fog/40")} />
-          <span className="size-2.5 rounded-pill bg-fog/40" />
+          {[0, 1, 2].map((led) => (
+            <span
+              key={led}
+              data-led=""
+              style={{ animationDelay: `${(i * 3 + led) * 0.37}s` }}
+              className={cx(
+                "size-[2.4cqw] rounded-pill",
+                i === 1 && led === 0 ? "bg-signal" : "bg-fog/50",
+              )}
+            />
+          ))}
         </div>
       ))}
+      <div className="relative min-h-0 flex-1 overflow-hidden rounded-[4cqw] border border-ink-3 bg-ink-2 px-[5%] py-[4%] font-mono text-[2.9cqw] leading-[1.7] text-fog">
+        <ul data-log="">
+          {[...LOG, ...LOG].map(([method, path, status, time], n) => (
+            <li key={n} className="flex gap-[3cqw] whitespace-nowrap">
+              <span className="w-[11cqw] text-paper">{method}</span>
+              <span className="flex-1 truncate">{path}</span>
+              <span className={status === "201" ? "text-signal" : undefined}>{status}</span>
+              <span className="w-[9cqw] text-right">{time}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
@@ -142,7 +129,7 @@ export function Device({
       aria-hidden="true"
       data-device=""
       className={cx(
-        "@container relative aspect-square",
+        "device-live @container relative aspect-square",
         threeD ? "[perspective:1400px]" : "xl:[perspective:1400px]",
         className,
       )}

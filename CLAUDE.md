@@ -19,7 +19,7 @@ Source of truth for all claims: `docs/resume-facts.md` (from the resume). Never 
 - [x] M1 Foundations: primitives, typed content layer + zod schema, nav (top bar → floating dock on desktop, full-screen menu on mobile), motion provider with reduced-motion
 - [x] M2 Hero: Name Wall static first (fast LCP), then fake-3D morph device + signal line on scroll (the morph moves to Layers in M4, see "M4 plan")
 - [x] M3 Work: bento grid, layer filters, recreated screens, case studies (`/work/[slug]` pages + overlay)
-- [ ] M4 Layers device morph (pinned desktop, swipe mobile, see "M4 plan"), hero device back to a static phone, Path timeline, How I Work
+- [x] M4 Layers device morph (pinned desktop, swipe mobile, see "M4 plan"), hero device back to a static phone, Path timeline, How I Work
 - [ ] M5 Contact, resume download, SEO (metadata, OG, JSON-LD, sitemap), switch robots to index
 - [ ] M6 QA and polish
 
@@ -69,6 +69,12 @@ Built in M4 (notes for later work):
 - The pinned layout activates only when the section is approached from above (still below the viewport). After a jump past it (dock link, hash) it stays as static steps until the next approach, so a pin spacer never appears above the reader.
 - React Native has no simple-icons mark; it uses the React atom (its actual logo) labelled "React Native". Salesforce and WebSockets are text labels.
 - Breakpoint: pinned at lg (1024px) and up; swipe cards below lg (tablets included).
+
+## M5 notes
+
+- Resume: `getResumeHref()` (src/lib/resume.ts) checks `public/resume.pdf` at build; the hero and contact download buttons render only when it exists. The PDF must be the phone-free version.
+- Indexing: `indexable` (src/lib/site.ts) is true only when `VERCEL_ENV=production`; it drives `robots.ts` and the page robots meta. Previews, local and CI builds stay noindex.
+- OG images use next/og with Anton vendored as TTF in `src/assets/og` (Satori can't read WOFF2); asset reads are `"use cache"` so the images prerender. Keep that folder under ~400KB (500KB bundle limit).
 
 ## Tokens (in `src/app/globals.css`)
 

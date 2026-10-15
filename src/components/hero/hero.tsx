@@ -2,6 +2,7 @@ import Image from "next/image";
 import { SignalLine } from "@/components/signal";
 import { Accent, ButtonLink, Container } from "@/components/ui";
 import type { Profile } from "@/content";
+import { getResumeHref } from "@/lib/resume";
 import { HeroPhone } from "./hero-phone";
 
 /**
@@ -23,6 +24,7 @@ import { HeroPhone } from "./hero-phone";
  * Vars: --F name size, --Ha avatar height (desktop: 72svh, max 680px).
  */
 export function Hero({ profile }: { profile: Profile }) {
+  const resumeHref = getResumeHref();
   return (
     <section
       data-hero=""
@@ -80,8 +82,8 @@ export function Hero({ profile }: { profile: Profile }) {
             <ButtonLink href="/#work" size="lg">
               See the work
             </ButtonLink>
-            {profile.resumeUrl && (
-              <ButtonLink href={profile.resumeUrl} variant="secondary" size="lg" download>
+            {resumeHref && (
+              <ButtonLink href={resumeHref} variant="secondary" size="lg" download>
                 Download resume
               </ButtonLink>
             )}

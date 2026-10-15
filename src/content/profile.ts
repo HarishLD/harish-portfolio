@@ -13,6 +13,7 @@ export const profile: Profile = {
     linkedin: "https://www.linkedin.com/in/harish-ld-7194081b8",
     github: "https://github.com/HarishLD",
   },
+  availability: "Available to join in 5 to 10 days. Open to remote and relocation.",
   howIWork: [
     {
       title: "Tested",
