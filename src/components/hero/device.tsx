@@ -117,9 +117,12 @@ function ServerFace() {
 export function Device({
   state,
   threeD = false,
+  only = false,
   className,
 }: {
   state: Layer;
+  /** Render just the face for `state` (static layouts); the morph needs all three. */
+  only?: boolean;
   /** Tilt and 3D context at every size (Layers). Default: only on xl, flat below. */
   threeD?: boolean;
   className?: string;
@@ -152,9 +155,9 @@ export function Device({
             : "xl:[transform:rotateY(-24deg)_rotateX(8deg)] xl:[transform-style:preserve-3d]",
         )}
       >
-        <PhoneFace />
-        <BrowserFace />
-        <ServerFace />
+        {(!only || state === "mobile") && <PhoneFace />}
+        {(!only || state === "web") && <BrowserFace />}
+        {(!only || state === "backend") && <ServerFace />}
       </div>
     </div>
   );

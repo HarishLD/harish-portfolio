@@ -67,7 +67,7 @@ jobs:
     name: Lighthouse budget
     needs: quality
     runs-on: ubuntu-24.04 # pinned: ubuntu-latest moves to 26.04 on 2026-10-19
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -79,7 +79,10 @@ jobs:
         with:
           name: next-build
           path: .next
-      - run: npx --yes @lhci/cli@0.15.x autorun
+      - name: Lighthouse desktop (every page)
+        run: npx --yes @lhci/cli@0.15.x autorun --config=lighthouserc.json
+      - name: Lighthouse mobile (every page)
+        run: npx --yes @lhci/cli@0.15.x autorun --config=lighthouserc.mobile.json
       - if: always()
         uses: actions/upload-artifact@v7
         with:

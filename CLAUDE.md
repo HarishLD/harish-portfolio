@@ -76,6 +76,13 @@ Built in M4 (notes for later work):
 - Indexing: `indexable` (src/lib/site.ts) is true only when `VERCEL_ENV=production`; it drives `robots.ts` and the page robots meta. Previews, local and CI builds stay noindex.
 - OG images use next/og with Anton vendored as TTF in `src/assets/og` (Satori can't read WOFF2); asset reads are `"use cache"` so the images prerender. Keep that folder under ~400KB (500KB bundle limit).
 
+## M6 notes
+
+- Lighthouse CI runs every page twice: `lighthouserc.json` (desktop) and `lighthouserc.mobile.json`. `is-crawlable` is off in CI because previews are noindex by design.
+- QA specs: `e2e/a11y.spec.ts` (axe on every page, the overlay, pinned Layers, reduced motion) and `e2e/keyboard.spec.ts` (full Tab walkthrough, overlay focus).
+- Generated assets: `node scripts/icons.mjs` (favicon set from `src/app/icon.svg`), `node scripts/og-screens.mjs` (OG screen snapshots, needs a running build). Re-run after changing the mark or a recreated screen.
+- `docs/content-audit.md` maps every claim to resume-facts.md; update it when content changes.
+
 ## Tokens (in `src/app/globals.css`)
 
 paper #EFEDE6 · paper-2 #E4E1D8 · line #CFCBC0 · muted #4A4741 (text on paper) · ink #0B0B0A · ink-2 #1E1E1C · ink-3 #2B2A27 · fog #B5B1A8 (text on ink) · signal #C8FF2E

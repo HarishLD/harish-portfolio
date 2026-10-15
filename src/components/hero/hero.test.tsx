@@ -46,7 +46,7 @@ describe("Hero", () => {
     mockReducedMotion(false);
     const { container } = renderHero();
     const link = screen.getByRole("link", {
-      name: "Pet Care Platform booking demo, open case study",
+      name: "Pet Care Platform booking demo (recreated UI), open case study",
     });
     expect(link).toHaveAttribute("href", "/work/pet-care-platform");
     expect(container.querySelector(".booking-demo [data-demo-tick]")).not.toBeNull();

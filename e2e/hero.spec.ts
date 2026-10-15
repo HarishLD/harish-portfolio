@@ -78,7 +78,7 @@ test.describe("hero", () => {
     test.skip((viewport?.width ?? 0) < 768, "phone is hidden below md");
     await page.goto("/");
     const phone = page.getByRole("link", {
-      name: "Pet Care Platform booking demo, open case study",
+      name: "Pet Care Platform booking demo (recreated UI), open case study",
     });
     await expect(phone).toBeVisible();
     const tick = page.locator("[data-hero-phone] [data-demo-tick]");

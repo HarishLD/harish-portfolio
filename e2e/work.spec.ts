@@ -69,7 +69,12 @@ test.describe("work", () => {
   test("unknown case studies return a real 404", async ({ page }) => {
     const res = await page.goto("/work/not-a-project");
     expect(res?.status()).toBe(404);
-    await expect(page.getByText("This page could not be found.")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "404" })).toBeVisible();
+    await expect(page.getByRole("main").getByRole("link", { name: "Back home" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+    await expect(page).toHaveTitle(/Page not found/);
   });
 
   test("known case studies still return 200", async ({ request }) => {

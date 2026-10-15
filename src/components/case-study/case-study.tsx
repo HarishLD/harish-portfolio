@@ -23,6 +23,8 @@ export function CaseStudy({
   titleId?: string;
 }) {
   const screens = getScreens(project.slug);
+  // One level below the title: h2 on the page (title h1), h3 in the overlay (title h2).
+  const sub = inOverlay ? "h3" : "h2";
   const index = projects.findIndex((p) => p.slug === project.slug);
   const next = projects[(index + 1) % projects.length];
 
@@ -63,7 +65,7 @@ export function CaseStudy({
           if (items.length === 0) return null;
           return (
             <div key={scope} className="flex flex-col gap-4 border-t border-line pt-6">
-              <Label as="h3" className="text-muted">
+              <Label as={sub} className="text-muted">
                 {scopeTitle[scope]}
               </Label>
               <dl className="grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-4">
@@ -111,7 +113,7 @@ export function CaseStudy({
         aria-labelledby={`${project.slug}-did`}
         className="grid gap-6 md:grid-cols-[1fr_2fr]"
       >
-        <Label as="h3" id={`${project.slug}-did`} className="text-muted">
+        <Label as={sub} id={`${project.slug}-did`} className="text-muted">
           What I did
         </Label>
         <ul className="flex flex-col gap-4">
@@ -128,7 +130,7 @@ export function CaseStudy({
         aria-labelledby={`${project.slug}-stack`}
         className="grid gap-6 md:grid-cols-[1fr_2fr]"
       >
-        <Label as="h3" id={`${project.slug}-stack`} className="text-muted">
+        <Label as={sub} id={`${project.slug}-stack`} className="text-muted">
           Stack
         </Label>
         <ul className="flex flex-wrap gap-2">

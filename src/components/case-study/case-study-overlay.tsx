@@ -20,6 +20,18 @@ export function CaseStudyOverlay({ children, titleId }: { children: ReactNode; t
   // Layout effect: open before paint. Next keeps visited routes alive inside a
   // hidden <Activity>; its cleanup runs when this overlay is hidden (Back,
   // Escape, a link elsewhere), so the modal closes and the page stops being inert.
+  // Remember what opened the overlay (the card link) and give focus back to it when
+  // the overlay goes away. Router navigation on close skips the dialog's native
+  // focus return, so it's done here, after the dialog has closed (next frame).
+  useLayoutEffect(() => {
+    const opener = document.activeElement as HTMLElement | null;
+    return () => {
+      requestAnimationFrame(() => {
+        if (opener?.isConnected && opener !== document.body) opener.focus({ preventScroll: true });
+      });
+    };
+  }, []);
+
   useLayoutEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
